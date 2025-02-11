@@ -45,7 +45,7 @@
             <div class="form-group">
                 <input type="password" id="password" name="password" placeholder="Password" required>
             </div>
-            <button type="button" onclick="confirmRegistration()" class="register-button">Register</button>
+            <button type="submit" class="register-button">Register</button>
             <div class="login-link">
                 <a href="login.php">Back to Login</a>
             </div>
@@ -53,64 +53,64 @@
     </div>
 
     <script>
-        function confirmRegistration() {
-            const form = document.getElementById('registrationForm');
-            const inputs = form.querySelectorAll('input[required], select[required]');
+        document.getElementById('registrationForm').onsubmit = function(e) {
+            const inputs = this.querySelectorAll('input[required], select[required]');
             let allFilled = true;
-            
+    
             inputs.forEach(input => {
                 if (!input.value) {
-                    allFilled = false;
-                }
-            });
-            
-            if (!allFilled) {
-                alert('Please fill in all required fields.');
-                return;
+                allFilled = false;
             }
-            
-            const isConfirmed = confirm;
-            
-            if (isConfirmed) {
-                // Store the registration data
-                const username = document.getElementById('username').value;
-                const password = document.getElementById('password').value;
-                
-                // Save to localStorage
-                localStorage.setItem('registeredUsername', username);
-                localStorage.setItem('registeredPassword', password);
-                
-                alert('Registration successful!');
-                window.location.href = 'login.php'; // Redirect to login page
-            }
+        });
+    
+    if (!allFilled) {
+        e.preventDefault();
+        alert('Please fill in all required fields.');
+        return false;
+    }
+    
+        if (!confirm('Are you sure you want to register?')) {
+            e.preventDefault();
+            return false;
         }
+    
+        return true;
+    };
     </script>
 </body>
 </html>
 
 <?php
-    include ("connect.php");
+include "connect.php";
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 
-    if ($_SERVER["REQUEST_METHOD"] == "POST") {
-        
-        $IDNO = mysqli_real_escape_string($conn, $_POST['IDNO']);
-        $Lastname = mysqli_real_escape_string($conn, $_POST['Lastname']);
-        $Firstname = mysqli_real_escape_string($conn, $_POST['Firstname']);
-        $Midname = mysqli_real_escape_string($conn, $_POST['Midname']);
-        $course = mysqli_real_escape_string($conn, $_POST['course']);
-        $year_level = mysqli_real_escape_string($conn, $_POST['year_level']);
-        $username = mysqli_real_escape_string($conn, $_POST['username']);
-        $password = mysqli_real_escape_string($conn, $_POST['password']);
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // Debug: Print the POST data
+    echo "POST data received:<br>";
+    print_r($_POST);
+    
+    $IDNO = mysqli_real_escape_string($conn, $_POST['IDNO']);
+    $Lastname = mysqli_real_escape_string($conn, $_POST['Lastname']);
+    $Firstname = mysqli_real_escape_string($conn, $_POST['Firstname']);
+    $Midname = mysqli_real_escape_string($conn, $_POST['Midname']);
+    $course = mysqli_real_escape_string($conn, $_POST['course']);
+    $year_level = mysqli_real_escape_string($conn, $_POST['year_level']);
+    $username = mysqli_real_escape_string($conn, $_POST['username']);
+    $password = mysqli_real_escape_string($conn, $_POST['password']);
 
-        $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
+    $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
 
-        $sql = "INSERT INTO user(IDNO, Lastname, Firstname, Midname, course, year_level, username, password) 
-                VALUES ('$IDNO', '$Lastname', '$Firstname', '$Midname', '$course', '$year_level', '$username', '$hashedPassword')";
+    $sql = "INSERT INTO user(IDNO, Lastname, Firstname, Midname, course, year_level, username, password) 
+            VALUES ('$IDNO', '$Lastname', '$Firstname', '$Midname', '$course', '$year_level', '$username', '$hashedPassword')";
 
-        if ($conn->query($sql) === TRUE) {
-            echo "Account Created!";
-        } else {
-            echo "Error: " . $sql . "<br>" . $conn->error;
-        }
-    }   
+    if ($conn->query($sql) === TRUE) {
+        echo "<script>
+            alert('Account Created Successfully!');
+            window.location.href = 'login.php';
+        </script>";
+    } else {
+        echo "<script>alert('Registration Failed');</script>";
+    }
+}
 ?>

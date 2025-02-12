@@ -103,7 +103,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     $sql = "INSERT INTO user(IDNO, Lastname, Firstname, Midname, course, year_level, username, password) 
             VALUES ('$IDNO', '$Lastname', '$Firstname', '$Midname', '$course', '$year_level', '$username', '$hashedPassword')";
-
+            
     if ($conn->query($sql) === TRUE) {
         echo "<script>
             alert('Account Created Successfully!');

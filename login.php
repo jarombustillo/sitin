@@ -24,6 +24,19 @@
             </div>
         </form>
     </div>
+    <script>
+    // Add a simple drop-in animation for the login container
+    document.addEventListener('DOMContentLoaded', function() {
+        const loginContainer = document.querySelector('.login-container');
+        loginContainer.style.transform = 'translateY(-50px)';
+        loginContainer.style.opacity = '0';
+        loginContainer.style.transition = 'transform 1s ease-in-out, opacity 1s ease-in-out';
+        setTimeout(() => {
+            loginContainer.style.transform = 'translateY(0)';
+            loginContainer.style.opacity = '1';
+        }, 10);
+    });
+</script>
 </body>
 </html>
 

@@ -76,6 +76,17 @@
     
         return true;
     };
+    // Add a simple drop-in animation for the registration container
+    document.addEventListener('DOMContentLoaded', function() {
+        const registerContainer = document.querySelector('.register-container');
+        registerContainer.style.transform = 'translateY(-50px)';
+        registerContainer.style.opacity = '0';
+        registerContainer.style.transition = 'transform 1s ease-in-out, opacity 1s ease-in-out';
+        setTimeout(() => {
+            registerContainer.style.transform = 'translateY(0)';
+            registerContainer.style.opacity = '1';
+        }, 10);
+    });
     </script>
 </body>
 </html>
@@ -103,7 +114,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     $sql = "INSERT INTO user(IDNO, Lastname, Firstname, Midname, course, year_level, username, password) 
             VALUES ('$IDNO', '$Lastname', '$Firstname', '$Midname', '$course', '$year_level', '$username', '$hashedPassword')";
-            
+
     if ($conn->query($sql) === TRUE) {
         echo "<script>
             alert('Account Created Successfully!');

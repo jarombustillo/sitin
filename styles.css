@@ -101,3 +101,17 @@ body {
         padding: 1.5rem;
     }
 }
+
+.edit-button {
+    background-color: #4a90e2;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.edit-button:hover {
+    background-color: #1128f5;
+}

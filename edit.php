@@ -20,6 +20,9 @@
         if ($result->num_rows > 0) {
             $row = $result->fetch_assoc();
             ?>
+            <div class="profile-pic">
+                <img src="uploads/<?php echo htmlspecialchars($row['profilepic']); ?>" alt="Profile Picture">
+            </div>
             <form action="update_profile.php" method="post">
                 <div class="form-group">
                     <label for="firstname"></label>
@@ -48,7 +51,7 @@
             </form>
             <?php
         } else {
-            echo "<p>No user data found.</p>";
+            echo "<script>alert('No user data found');</script>";
         }
         ?>
     </div>

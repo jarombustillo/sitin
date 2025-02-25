@@ -128,7 +128,7 @@
                     <!-- Announcements -->
                     <div class="col-md-4">
                         <div class="card">
-                            <div class="card-header bg-info text-white">Announcements</div>
+                            <div class="card-header bg-info text-white">Announcementsss</div>
                             <div class="card-body announcement-box">
                                 <p>No announcement yet.</p>
                             </div>

@@ -86,9 +86,9 @@ if (mysqli_num_rows($result) > 0) {
         }
     }
 ?>
-    <div class="profile-pic" style="text-align: center; margin-bottom: 20px;">
+    <div class="profile-pic text-center">
         <img src="uploads/<?php echo htmlspecialchars($profilepic); ?>" alt="Profile Picture" 
-            onerror="this.src='uploads/default.png';" style="max-width: 200px; height: auto;" />
+            onerror="this.src='uploads/default.png';" class='rounded-circle mb-3' width='100' height='100' alt='Profile Picture' />
     </div>
     <form action="" method="post" enctype="multipart/form-data">
         <div class="form-group">
@@ -101,7 +101,7 @@ if (mysqli_num_rows($result) > 0) {
         </div>
         <div class="form-group">
             <label for="midname">Middle Name</label>
-            <input type="text" id="midname" name="midname" value="<?php echo htmlspecialchars($user['Midname']); ?>" required>
+            <input type="text" id="midname" name="midname" value="<?php echo htmlspecialchars($user['Midname']); ?>">
         </div>
         <div class="form-group">
             <label for="lastname">Last Name</label>

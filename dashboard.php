@@ -14,6 +14,9 @@
         .container-fluid {
             flex: 1;
         }
+        .offcanvas {
+            width: 250px;
+        }
         .sidebar {
             height: 100vh;
             position: fixed;
@@ -50,40 +53,29 @@
     </style>
 </head>
 <body>
-    <nav class="navbar navbar-dark bg-dark">
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <a class="navbar-brand" href="#">Dashboard</a>
-    </nav>
+        <nav class="navbar navbar-dark bg-dark">
+                <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebarMenu">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <a class="navbar-brand" href="#">Dashboard</a>
+            </nav>
 
-    <div class="container-fluid">
-        <div class="row">
             <!-- Sidebar -->
-            <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
-                <div class="sidebar-sticky pt-3">
+            <div class="offcanvas offcanvas-start bg-light" tabindex="-1" id="sidebarMenu">
+                <div class="offcanvas-header">
+                    <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+                </div>
+                <div class="offcanvas-body">
                     <ul class="nav flex-column">
-                        <li class="nav-item">
-                            <a class="nav-link" href="dashboard.php">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="edit.php">Edit Profile</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="view_remaining_system.php">View Remaining Session</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="history.php">History</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="reservation.php">Reservation</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="login.php" onclick="return confirm('Are you sure you want to log out?');">Logout</a>
-                        </li>
+                        <li class="nav-item"><a class="nav-link" href="dashboard.php">Home</a></li>
+                        <li class="nav-item"><a class="nav-link" href="edit.php">Edit Profile</a></li>
+                        <li class="nav-item"><a class="nav-link" href="view_remaining_system.php">View Remaining Session</a></li>
+                        <li class="nav-item"><a class="nav-link" href="history.php">History</a></li>
+                        <li class="nav-item"><a class="nav-link" href="reservation.php">Reservation</a></li>
+                        <li class="nav-item"><a class="nav-link" href="login.php" onclick="return confirm('Are you sure you want to log out?');">Logout</a></li>
                     </ul>
                 </div>
-            </nav>
+            </div>
 
             <!-- Main Content -->
             <main role="main" class="col-md-9 ms-sm-auto col-lg-10 px-md-4">

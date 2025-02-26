@@ -7,9 +7,70 @@
     <link rel="stylesheet" href="styles.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
+<style>
+        body {
+            display: flex;
+            min-height: 100vh;
+            flex-direction: column;
+        }
+        .container-fluid {
+            flex: 1;
+        }
+        .offcanvas {
+            width: 250px;
+        }
+        .sidebar {
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 100;
+            padding: 48px 0 0;
+            box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
+        }
+        .sidebar-sticky {
+            position: -webkit-sticky;
+            position: sticky;
+            top: 0;
+            height: calc(100vh - 48px);
+            padding-top: .5rem;
+            overflow-x: hidden;
+            overflow-y: auto;
+        }
+        .navbar-toggler {
+            position: absolute;
+            left: 10px;
+        }
+
+    </style>
 <body>
+            <nav class="navbar navbar-dark bg-dark">
+                <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebarMenu">
+                    <span class="navbar-toggler-icon" style="filter: invert(100%);"></span>
+                </button>
+            </nav>
+
+            <!-- Sidebar -->
+            <div class="offcanvas offcanvas-start bg-light" tabindex="-1" id="sidebarMenu">
+                <div class="offcanvas-header">
+                    <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+                </div>
+                <div class="offcanvas-body">
+                    <ul class="nav flex-column">
+                        <li class="nav-item"><a class="nav-link" href="dashboard.php">Home</a></li>
+                        <li class="nav-item"><a class="nav-link" href="edit.php">Edit Profile</a></li>
+                        <li class="nav-item"><a class="nav-link" href="view_remaining_system.php">View Remaining Session</a></li>
+                        <li class="nav-item"><a class="nav-link" href="history.php">History</a></li>
+                        <li class="nav-item"><a class="nav-link" href="reservation.php">Reservation</a></li>
+                        <li class="nav-item"><a class="nav-link" href="login.php" onclick="return confirm('Are you sure you want to log out?');">Logout</a></li>
+                    </ul>
+                </div>
+            </div>
     <div class="profile-container">
+        <div></div>    
         <h1 class="profile-title">Edit Profile</h1>
+        
+
 <?php
 session_start();
 include("connect.php");
@@ -134,5 +195,6 @@ if (mysqli_num_rows($result) > 0) {
 }
 ?>
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

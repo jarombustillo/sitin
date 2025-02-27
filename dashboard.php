@@ -121,13 +121,18 @@
                                 $username = $_SESSION['username'];
                                 $sql = "SELECT * FROM user WHERE username='$username'";
                                 $result = $conn->query($sql);
+                                $profilepic = "uploads/default.png"; // Default profile picture
+
+                                if (!empty($row['profilepic']) && file_exists("uploads/" . $row['profilepic'])) {
+                                    $profilepic = "uploads/" . htmlspecialchars($row['profilepic']);
+                                }
+
+                                echo "<img src='$profilepic' class='rounded-circle mb-3' width='100' height='100' alt='Profile Picture'>";
 
                                 if ($result->num_rows > 0) {
                                     $row = $result->fetch_assoc();
                                     $fullname = htmlspecialchars($row['Firstname']) . " " . htmlspecialchars($row['Midname']) . " " . htmlspecialchars($row['Lastname']);
-                                    $profilepic = "uploads/default.png";
 
-                                    echo "<img src='$profilepic' class='rounded-circle mb-3' width='100' height='100' alt='Profile Picture'>";
                                     echo "<p><strong>IDNO:</strong> " . htmlspecialchars($row['IDNO']) . "</p>";
                                     echo "<p><strong>Name:</strong> $fullname</p>";
                                     echo "<p><strong>Course:</strong> " . htmlspecialchars($row['course']) . "</p>";

@@ -102,7 +102,7 @@ if (mysqli_num_rows($result) > 0) {
             // Get file details
             $file_name = basename($_FILES["profile_pic"]["name"]);
             $file_type = strtolower(pathinfo($file_name, PATHINFO_EXTENSION));
-            $allowed_types = ["jpg", "jpeg", "png", "gif"];
+            $allowed_types = ["jpg", "jpeg", "png", "gif", "jfif"];
             $file_size = $_FILES["profile_pic"]["size"];
 
             // Validate file type
@@ -183,7 +183,7 @@ if (mysqli_num_rows($result) > 0) {
             </select>
         </div>
         <div class="form-group">
-            <input type="submit" value="Update Profile" class="edit-button">
+            <input type="submit" value="Save changes" class="edit-button">
         </div>
     </form>
 <?php

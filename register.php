@@ -97,9 +97,6 @@ error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Debug: Print the POST data
-    echo "POST data received:<br>";
-    print_r($_POST);
     
     $IDNO = mysqli_real_escape_string($conn, $_POST['IDNO']);
     $Lastname = mysqli_real_escape_string($conn, $_POST['Lastname']);
@@ -112,16 +109,23 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
 
-    $sql = "INSERT INTO user(IDNO, Lastname, Firstname, Midname, course, year_level, username, password) 
-            VALUES ('$IDNO', '$Lastname', '$Firstname', '$Midname', '$course', '$year_level', '$username', '$hashedPassword')";
+    $sql = "INSERT INTO user (IDNO, Lastname, Firstname, Midname, course, year_level, username, password) 
+        VALUES ('$IDNO', '$Lastname', '$Firstname', " . ($Midname ? "'$Midname'" : "NULL") . ", '$course', '$year_level', '$username', '$hashedPassword')";
+    
+    $checkUser = "SELECT * FROM user WHERE username='$username'";
+    $result = $conn->query($checkUser);
+    if ($result->num_rows > 0) {
+        echo "<script>alert('Username already exists. Please choose another one.');</script>";
+    } else {
+        // Proceed with insertion
+    }
 
     if ($conn->query($sql) === TRUE) {
-        echo "<script>
-            alert('Account Created Successfully!');
-            window.location.href = 'login.php';
-        </script>";
+        echo "<script>alert('Account Created Successfully!');</script>";
+        echo "<script>window.location = 'login.php';</script>";
     } else {
-        echo "<script>alert('Registration Failed');</script>";
+        echo "<script>alert('Registration Failed: " . $conn->error . "');</script>";
     }
+
 }
 ?>

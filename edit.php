@@ -50,6 +50,7 @@
                 <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebarMenu">
                     <span class="navbar-toggler-icon"></span>
                 </button>
+                <a class="navbar-brand" href="dashboard.php">Dashboard</a>
             </nav>
 
             <!-- Sidebar -->

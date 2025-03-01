@@ -55,6 +55,13 @@
             margin-bottom: 20px;
             justify-content: center;
         }
+        .profile-pic img {
+            width: 120px;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 3px solid #007bff;
+        }
     </style>
 </head>
 <body>
@@ -127,7 +134,7 @@
                                     $profilepic = "uploads/" . htmlspecialchars($row['profilepic']);
                                 }
 
-                                echo "<img src='$profilepic' class='rounded-circle mb-3' width='100' height='100' alt='Profile Picture'>";
+                                echo "<img src='$profilepic' class='rounded-circle border shadow' width='110' height='110' alt='Profile Picture'>";
 
                                 if ($result->num_rows > 0) {
                                     $row = $result->fetch_assoc();

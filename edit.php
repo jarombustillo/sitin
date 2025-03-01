@@ -4,51 +4,51 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Profile</title>
-    <link rel="stylesheet" href="styles.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <style>
         body {
-            display: flex;
-            min-height: 100vh;
-            flex-direction: column;
+            background-color: #f8f9fa;
         }
-        .container-fluid {
-            flex: 1;
+        .navbar {
+            background-color: #212529 !important;
         }
-        .offcanvas {
-            width: 250px;
+        .profile-container {
+            max-width: 600px;
+            margin: 50px auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
-        .sidebar {
-            height: 100vh;
-            position: fixed;
-            top: 0;
-            left: 0;
-            z-index: 100;
-            padding: 48px 0 0;
-            box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
+        .profile-pic img {
+            width: 120px;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 3px solid #007bff;
         }
-        .sidebar-sticky {
-            position: -webkit-sticky;
-            position: sticky;
-            top: 0;
-            height: calc(100vh - 48px);
-            padding-top: .5rem;
-            overflow-x: hidden;
-            overflow-y: auto;
+        .edit-button {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: 0.3s;
         }
-        .navbar-toggler {
-            position: absolute;
-            top: 0;
-            right: 10px;
-            left: 600px;
+        .edit-button:hover {
+            background-color: #0056b3;
         }
+        
+        
+        
 
     </style>
 <body>
             <nav class="navbar navbar-dark bg-dark">
                 <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebarMenu">
-                    <span class="navbar-toggler-icon" style="filter: invert(100%);"></span>
+                    <span class="navbar-toggler-icon"></span>
                 </button>
             </nav>
 
@@ -149,30 +149,38 @@ if (mysqli_num_rows($result) > 0) {
         }
     }
 ?>
-    <div class="profile-pic text-center">
-        <img src="uploads/<?php echo htmlspecialchars($profilepic); ?>" alt="Profile Picture" 
-            onerror="this.src='uploads/default.png';" class='rounded-circle mb-3' width='100' height='100' alt='Profile Picture' />
-    </div>
-    <form action="" method="post" enctype="multipart/form-data">
-        <div class="form-group">
-            <label for="profile_pic">Change Profile Picture</label>
-            <input type="file" id="profile_pic" name="profile_pic" accept="image/*">
+        <form action="" method="post" enctype="multipart/form-data" class="container mt-4">
+        <div class="text-center mb-3">
+            <img src="uploads/<?php echo htmlspecialchars($profilepic); ?>" alt="Profile Picture" 
+                onerror="this.src='uploads/default.png';" class="rounded-circle border shadow" width="120" height="120">
         </div>
-        <div class="form-group">
-            <label for="firstname">First Name</label>
-            <input type="text" id="firstname" name="firstname" value="<?php echo htmlspecialchars($user['Firstname']); ?>" required>
+
+        <div class="mb-3">
+            <label for="profile_pic" class="form-label">Change Profile Picture</label>
+            <input type="file" id="profile_pic" name="profile_pic" class="form-control" accept="image/*">
         </div>
-        <div class="form-group">
-            <label for="midname">Middle Name</label>
-            <input type="text" id="midname" name="midname" value="<?php echo htmlspecialchars($user['Midname']); ?>">
+
+        <div class="mb-3">
+            <label for="firstname" class="form-label">First Name</label>
+            <input type="text" id="firstname" name="firstname" class="form-control" 
+                value="<?php echo htmlspecialchars($user['Firstname']); ?>" required>
         </div>
-        <div class="form-group">
-            <label for="lastname">Last Name</label>
-            <input type="text" id="lastname" name="lastname" value="<?php echo htmlspecialchars($user['Lastname']); ?>" required>
+
+        <div class="mb-3">
+            <label for="midname" class="form-label">Middle Name</label>
+            <input type="text" id="midname" name="midname" class="form-control" 
+                value="<?php echo htmlspecialchars($user['Midname']); ?>">
         </div>
-        <div class="form-group">
-            <label for="year_level">Year Level</label>
-            <select id="year_level" name="year_level" required>
+
+        <div class="mb-3">
+            <label for="lastname" class="form-label">Last Name</label>
+            <input type="text" id="lastname" name="lastname" class="form-control" 
+                value="<?php echo htmlspecialchars($user['Lastname']); ?>" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="year_level" class="form-label">Year Level</label>
+            <select id="year_level" name="year_level" class="form-select" required>
                 <option value="" disabled>Select Year Level</option>
                 <?php
                 for ($i = 1; $i <= 4; $i++) {
@@ -182,8 +190,9 @@ if (mysqli_num_rows($result) > 0) {
                 ?>
             </select>
         </div>
-        <div class="form-group">
-            <input type="submit" value="Save changes" class="edit-button">
+
+        <div class="text-center">
+            <button type="submit" class="btn btn-primary">Save Changes</button>
         </div>
     </form>
 <?php

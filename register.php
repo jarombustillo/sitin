@@ -111,20 +111,27 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     $sql = "INSERT INTO user (IDNO, Lastname, Firstname, Midname, course, year_level, username, password) 
         VALUES ('$IDNO', '$Lastname', '$Firstname', " . ($Midname ? "'$Midname'" : "NULL") . ", '$course', '$year_level', '$username', '$hashedPassword')";
+
+    $checkIDNO = "SELECT * FROM user WHERE IDNO='$IDNO'";
+    $resultIDNO = $conn->query($checkIDNO);
+    if ($resultIDNO->num_rows > 0) {
+        echo "<script>alert('IDNO already exists. Please use another one.');</script>";
+        exit();
+    }
     
     $checkUser = "SELECT * FROM user WHERE username='$username'";
     $result = $conn->query($checkUser);
     if ($result->num_rows > 0) {
         echo "<script>alert('Username already exists. Please choose another one.');</script>";
     } else {
-        // Proceed with insertion
+        echo "<script>alert('Username is available.');</script>";
     }
 
     if ($conn->query($sql) === TRUE) {
         echo "<script>alert('Account Created Successfully!');</script>";
         echo "<script>window.location = 'login.php';</script>";
     } else {
-        echo "<script>alert('Registration Failed: " . $conn->error . "');</script>";
+        echo "<script>alert('Registration Failed');</script>";
     }
 
 }

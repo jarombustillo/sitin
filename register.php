@@ -124,7 +124,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if ($result->num_rows > 0) {
         echo "<script>alert('Username already exists. Please choose another one.');</script>";
     } else {
-        echo "<script>alert('Username is available.');</script>";
+        // Proceed to registration
     }
 
     if ($conn->query($sql) === TRUE) {

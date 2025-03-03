@@ -150,15 +150,21 @@ if (mysqli_num_rows($result) > 0) {
         }
     }
 ?>
-        <form action="" method="post" enctype="multipart/form-data" class="container mt-4">
-        <div class="text-center mb-3">
-            <img src="uploads/<?php echo htmlspecialchars($profilepic); ?>" alt="Profile Picture" 
-                onerror="this.src='uploads/default.png';" class="rounded-circle border shadow" width="120" height="120">
+    <form action="" method="post" enctype="multipart/form-data" class="container mt-4" style="max-height: 500px; overflow-y: auto;">
+    <div class="text-center mb-3">
+        <img src="uploads/<?php echo htmlspecialchars($profilepic); ?>" alt="Profile Picture" 
+        onerror="this.src='uploads/default.png';" class="rounded-circle border shadow" width="120" height="120">
+    </div>
+
+    <div class="mb-3">
+            <label for="profile_pic" class="form-label">Change Profile Picture</label>
+            <input type="file" id="profile_pic" name="profile_pic" class="form-control" accept="image/*">
         </div>
 
         <div class="mb-3">
-            <label for="profile_pic" class="form-label">Change Profile Picture</label>
-            <input type="file" id="profile_pic" name="profile_pic" class="form-control" accept="image/*">
+            <label for="idno" class="form-label">ID Number</label>
+            <input type="text" id="idno" name="idno" class="form-control" 
+                value="<?php echo htmlspecialchars($user['IDNO']); ?>" readonly>
         </div>
 
         <div class="mb-3">
@@ -177,6 +183,12 @@ if (mysqli_num_rows($result) > 0) {
             <label for="lastname" class="form-label">Last Name</label>
             <input type="text" id="lastname" name="lastname" class="form-control" 
                 value="<?php echo htmlspecialchars($user['Lastname']); ?>" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="course" class="form-label">Course</label>
+            <input type="text" id="course" name="course" class="form-control" 
+                value="<?php echo htmlspecialchars($user['course']); ?>" readonly>
         </div>
 
         <div class="mb-3">

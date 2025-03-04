@@ -137,9 +137,10 @@ if (mysqli_num_rows($result) > 0) {
             $firstname = $_POST['firstname'];
             $midname = $_POST['midname'];
             $year_level = $_POST['year_level'];
+            $course = $_POST['course'];
 
             // Update user information in the database - fixed column name capitalization
-            $query = "UPDATE user SET Lastname = '$lastname', Firstname = '$firstname', Midname = '$midname', year_level = '$year_level' WHERE username = '$username'";
+            $query = "UPDATE user SET Lastname = '$lastname', Firstname = '$firstname', Midname = '$midname', course = '$course', year_level = '$year_level' WHERE username = '$username'";
             $update_result = mysqli_query($conn, $query);
 
             if ($update_result) {
@@ -186,10 +187,15 @@ if (mysqli_num_rows($result) > 0) {
         </div>
 
         <div class="mb-3">
-            <label for="course" class="form-label">Course</label>
-            <input type="text" id="course" name="course" class="form-control" 
-                value="<?php echo htmlspecialchars($user['course']); ?>" readonly>
-        </div>
+        <label for="course" class="form-label">Course</label>
+        <select id="course" name="course" class="form-control" required>
+            <option value="" disabled>Select Course</option>
+            <option value="BSIT" <?php echo ($user['course'] == 'BSIT') ? 'selected' : ''; ?>>BSIT</option>
+            <option value="BSCS" <?php echo ($user['course'] == 'BSCS') ? 'selected' : ''; ?>>BSCS</option>
+            <option value="BSCPE" <?php echo ($user['course'] == 'BSCPE') ? 'selected' : ''; ?>>BSCPE</option>
+        </select>
+    </div>
+
 
         <div class="mb-3">
             <label for="year_level" class="form-label">Year Level</label>

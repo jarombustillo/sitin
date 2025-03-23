@@ -7,53 +7,33 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
+            background-color: #f8f9fa;
             display: flex;
-            min-height: 100vh;
             flex-direction: column;
-        }
-        .container-fluid {
-            flex: 1;
-        }
-        .offcanvas {
-            width: 250px;
-        }
-        .sidebar {
-            height: 100vh;
-            position: fixed;
-            top: 0;
-            left: 0;
-            z-index: 100;
-            padding: 48px 0 0;
-            box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
-        }
-        .sidebar-sticky {
-            position: -webkit-sticky;
-            position: sticky;
-            top: 0;
-            height: calc(100vh - 48px);
-            padding-top: .5rem;
-            overflow-x: hidden;
-            overflow-y: auto;
-        }
-        .card {
-            margin-bottom: 20px;
-            text-align: center;
-
+            min-height: 100vh;
         }
         .announcement-box, .rules-box {
             max-height: 250px;
             overflow-y: auto;
         }
-        .col-md-4{
-            position: relative;
-            width: 80%;
-            justify-content: center;
-        }
-        .mt-4{
-            display: inline-block;
-            margin-top: 20px;
+        .card {
+            border: none;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease-in-out;
             margin-bottom: 20px;
-            justify-content: center;
+            height: 100%; /* Make cards equal height */
+        }
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        .card-header {
+            background-color: #007bff;
+            color: white;
+            border-bottom: none;
+        }
+        .page-title {
+            text-align: center;
+            margin: 20px 0;
         }
         .profile-pic img {
             width: 120px;
@@ -62,61 +42,91 @@
             border-radius: 50%;
             border: 3px solid #007bff;
         }
+        .card-body {
+            padding: 20px;
+            background-color: #fff;
+        }
+        .dashboard-container {
+            padding: 0 15px;
+        }
+        .dashboard-row {
+            display: flex;
+            flex-wrap: wrap;
+            margin: 0 -15px;
+        }
+        .dashboard-col {
+            flex: 0 0 33.333333%;
+            max-width: 33.333333%;
+            padding: 0 15px;
+            margin-bottom: 20px;
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 992px) {
+            .dashboard-col {
+                flex: 0 0 50%;
+                max-width: 50%;
+            }
+        }
+        @media (max-width: 768px) {
+            .dashboard-col {
+                flex: 0 0 100%;
+                max-width: 100%;
+            }
+        }
+        
     </style>
 </head>
-<body>
-        <nav class="navbar navbar-dark bg-dark">
-                <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebarMenu">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <a class="navbar-brand" href="dashboard.php">Dashboard</a>
-            </nav>
-
-            <!-- Sidebar -->
-            <div class="offcanvas offcanvas-start bg-light" tabindex="-1" id="sidebarMenu">
-                <div class="offcanvas-header">
-                    <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
-                </div>
-                <div class="offcanvas-body">
-                    <ul class="nav flex-column">
-                        <li class="nav-item"><a class="nav-link" href="dashboard.php">Home</a></li>
-                        <li class="nav-item"><a class="nav-link" href="edit.php">Edit Profile</a></li>
-                        <li class="nav-item"><a class="nav-link" href="view_remaining_system.php">View Remaining Session</a></li>
-                        <li class="nav-item"><a class="nav-link" href="history.php">History</a></li>
-                        <li class="nav-item"><a class="nav-link" href="reservation.php">Reservation</a></li>
-                        <li class="nav-item"><a class="nav-link" href="login.php" onclick="return confirm('Are you sure you want to log out?');">Logout</a></li>
-                    </ul>
-                </div>
+<body class="d-flex flex-column min-vh-100">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="dashboard.php">Dashboard</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item"><a class="nav-link" href="edit.php">Edit Profile</a></li>
+                    <li class="nav-item"><a class="nav-link" href="view_remaining_system.php">View Remaining Session</a></li>
+                    <li class="nav-item"><a class="nav-link" href="history.php">History</a></li>
+                    <li class="nav-item"><a class="nav-link" href="reservation.php">Reservation</a></li>
+                    <li class="nav-item"><a class="nav-link" href="login.php" onclick="return confirm('Are you sure you want to log out?');">Logout</a></li>
+                </ul>
             </div>
+        </div>
+    </nav>
 
-            <!-- Main Content -->
-            <main role="main" class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-                <?php
-                session_start();
-                include "connect.php";
+    <div class="container-fluid">
+        <!-- Main Content -->
+        <main role="main" class="px-md-4">
+            <?php
+            session_start();
+            include "connect.php";
 
-                if (isset($_SESSION['username'])) {
-                    $username = $_SESSION['username'];
-                    $sql = "SELECT * FROM user WHERE username='$username'";
-                    $result = $conn->query($sql);
+            if (isset($_SESSION['username'])) {
+                $username = $_SESSION['username'];
+                $sql = "SELECT * FROM user WHERE username='$username'";
+                $result = $conn->query($sql);
 
-                    if ($result->num_rows > 0) {
-                        $row = $result->fetch_assoc();
-                        $Firstname = htmlspecialchars($row['Firstname']);
-                        echo "<h1 class='mt-4'>Welcome $Firstname to Sit-in Monitoring System</h1>";
-                    } else {
-                        echo "<h1 class='mt-4'>Welcome to Sit-in Monitoring System</h1>";
-                    }
+                if ($result->num_rows > 0) {
+                    $row = $result->fetch_assoc();
+                    $Firstname = htmlspecialchars($row['Firstname']);
+                    echo "<h1 class='page-title'>Welcome $Firstname to Sit-in Monitoring System</h1>";
                 } else {
-                    echo "<h1 class='mt-4'>Welcome to Sit-in Monitoring System</h1>";
+                    echo "<h1 class='page-title'>Welcome to Sit-in Monitoring System</h1>";
                 }
-                ?>
-                <div class="row"></div>
+            } else {
+                echo "<h1 class='page-title'>Welcome to Sit-in Monitoring System</h1>";
+            }
+            ?>
+            
+            <div class="dashboard-container">
+                <div class="dashboard-row">
                     <!-- Profile -->
-                    <div class="col-md-4">
+                    <div class="dashboard-col">
                         <div class="card">
-                            <div class="card-header bg-primary text-white">Profile</div>
-                            <div class="card-body text-center">
+                            <div class="card-header">Profile</div>
+                            <div class="card-body">
                                 <?php
                                 include "connect.php";
 
@@ -134,7 +144,7 @@
                                     $profilepic = "uploads/" . htmlspecialchars($row['profilepic']);
                                 }
 
-                                echo "<img src='$profilepic' class='rounded-circle border shadow' width='110' height='110' alt='Profile Picture'>";
+                                echo "<div class='text-center mb-3'><img src='$profilepic' class='rounded-circle border shadow' width='110' height='110' alt='Profile Picture'></div>";
 
                                 if ($result->num_rows > 0) {
                                     $row = $result->fetch_assoc();
@@ -153,20 +163,20 @@
                     </div>
 
                     <!-- Announcements -->
-                    <div class="col-md-4">
+                    <div class="dashboard-col">
                         <div class="card">
-                            <div class="card-header bg-info text-white">Announcements</div>
-                            <div class="card-body announcement-box">
+                            <div class="card-header" style="background-color: #17a2b8;">Announcements</div>
+                            <div class="card-body announcement-box" style="background-color: #f0f8ff;">
                                 <p>No announcement yet.</p>
                             </div>
                         </div>
                     </div>
 
                     <!-- Rules & Regulations -->
-                    <div class="col-md-4">
+                    <div class="dashboard-col">
                         <div class="card">
-                            <div class="card-header bg-warning text-dark">Rules & Regulations</div>
-                            <div class="card-body rules-box">
+                            <div class="card-header" style="background-color: #ffc107; color: #212529;">Rules & Regulations</div>
+                            <div class="card-body rules-box" style="background-color: #fff8dc;">
                                 <h5 class="text-center">University of Cebu</h5>
                                 <h6 class="text-center">COLLEGE OF INFORMATION & COMPUTER STUDIES</h6>
                                 <p><strong>LABORATORY RULES AND REGULATIONS</strong></p>
@@ -202,8 +212,8 @@
                         </div>
                     </div>
                 </div>
-            </main>
-        </div>
+            </div>
+        </main>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>

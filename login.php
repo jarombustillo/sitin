@@ -41,10 +41,23 @@
 </html>
 
 <?php
+
 session_start();
 include "connect.php";
 
+// Define admin credentials
+$admin_username = "admin";
+$admin_password = "admin123"; // Replace with a strong password
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // Check if admin login
+    if ($_POST['username'] == $admin_username && $_POST['password'] == $admin_password) {
+        $_SESSION['is_admin'] = true;
+        header("Location: admin.php");
+        exit();
+    }
+
+    // Regular user login
     $username = mysqli_real_escape_string($conn, $_POST['username']);
     $password = $_POST['password'];
     
@@ -56,14 +69,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $user = $result->fetch_assoc();
         // Verify the password
         if (password_verify($password, $user['password'])) {
-            // Start session and store user data
-            $_SESSION['username'] = $username;
-            $_SESSION['IDNO'] = $user['IDNO'];
-            $_SESSION['Firstname'] = $user['Firstname'];
-            $_SESSION['Lastname'] = $user['Lastname'];
-            
-            // Redirect to dashboard
-            header("Location: dashboard.php");
+             // Start session and store user data
+             $_SESSION['username'] = $username;
+             $_SESSION['IDNO'] = $user['IDNO'];
+             $_SESSION['Firstname'] = $user['Firstname'];
+             $_SESSION['Lastname'] = $user['Lastname'];
+             
+             // Redirect to dashboard
+             header("Location: dashboard.php");
             exit();
         } else {
             echo "<script>alert('Invalid username or password');</script>";

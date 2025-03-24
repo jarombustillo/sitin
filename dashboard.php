@@ -60,6 +60,22 @@
             padding: 0 15px;
             margin-bottom: 20px;
         }
+
+        .logout-btn {
+            background-color: #e74c3c;
+            color: white !important;
+            padding: 8px 20px !important;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+            margin-left: 20px;
+            text-decoration: none;
+        }
+
+        .logout-btn:hover {
+            background-color: #c0392b;
+            color: white !important;
+            text-decoration: none;
+        }
         
         /* Responsive adjustments */
         @media (max-width: 992px) {
@@ -90,8 +106,8 @@
                     <li class="nav-item"><a class="nav-link" href="view_remaining_system.php">View Remaining Session</a></li>
                     <li class="nav-item"><a class="nav-link" href="history.php">History</a></li>
                     <li class="nav-item"><a class="nav-link" href="reservation.php">Reservation</a></li>
-                    <li class="nav-item"><a class="nav-link" href="login.php" onclick="return confirm('Are you sure you want to log out?');">Logout</a></li>
                 </ul>
+                <<a href="login.php?logout=true" class="logout-btn ms-auto">Log out</a>
             </div>
         </div>
     </nav>
@@ -150,10 +166,13 @@
                                     $row = $result->fetch_assoc();
                                     $fullname = htmlspecialchars($row['Firstname']) . " " . htmlspecialchars($row['Midname']) . " " . htmlspecialchars($row['Lastname']);
 
-                                    echo "<p><strong>IDNO:</strong> " . htmlspecialchars($row['IDNO']) . "</p>";
+                                    echo "<div class='profile-info'>";
                                     echo "<p><strong>Name:</strong> $fullname</p>";
+                                    echo "<p><strong>ID Number:</strong> " . htmlspecialchars($row['IDNO']) . "</p>";
                                     echo "<p><strong>Course:</strong> " . htmlspecialchars($row['course']) . "</p>";
                                     echo "<p><strong>Year Level:</strong> " . htmlspecialchars($row['year_level']) . "</p>";
+                                    echo "<p><strong>Remaining Sessions:</strong> " . htmlspecialchars($row['session_count']) . "</p>";
+                                    echo "</div>";
                                 } else {
                                     echo "<script>alert('No user data found');</script>";
                                 }
@@ -167,7 +186,24 @@
                         <div class="card">
                             <div class="card-header" style="background-color: #17a2b8;">Announcements</div>
                             <div class="card-body announcement-box" style="background-color: #f0f8ff;">
-                                <p>No announcement yet.</p>
+                                <?php
+                                // Fetch announcements from database
+                                $announcement_sql = "SELECT * FROM announcement ORDER BY CREATED_AT DESC";
+                                $announcement_result = $conn->query($announcement_sql);
+
+                                if ($announcement_result && $announcement_result->num_rows > 0) {
+                                    while ($announcement = $announcement_result->fetch_assoc()) {
+                                        echo "<div class='announcement-item mb-3'>";
+                                        echo "<h6 class='mb-2'>" . htmlspecialchars($announcement['TITLE']) . "</h6>";
+                                        echo "<p class='mb-1'>" . htmlspecialchars($announcement['CONTENT']) . "</p>";
+                                        echo "<small class='text-muted'>Posted on: " . date("Y-m-d H:i:s", strtotime($announcement['CREATED_AT'])) . "</small>";
+                                        echo "</div>";
+                                        echo "<hr>";
+                                    }
+                                } else {
+                                    echo "<p class='text-center'>No announcements available.</p>";
+                                }
+                                ?>
                             </div>
                         </div>
                     </div>

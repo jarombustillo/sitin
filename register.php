@@ -109,8 +109,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
 
-    $sql = "INSERT INTO user (IDNO, Lastname, Firstname, Midname, course, year_level, username, password) 
-        VALUES ('$IDNO', '$Lastname', '$Firstname', " . ($Midname ? "'$Midname'" : "NULL") . ", '$course', '$year_level', '$username', '$hashedPassword')";
+    $sql = "INSERT INTO user (IDNO, Lastname, Firstname, Midname, course, year_level, username, password, session_count) 
+        VALUES ('$IDNO', '$Lastname', '$Firstname', " . ($Midname ? "'$Midname'" : "''") . ", '$course', '$year_level', '$username', '$hashedPassword', 30)";
 
     $checkIDNO = "SELECT * FROM user WHERE IDNO='$IDNO'";
     $resultIDNO = $conn->query($checkIDNO);

@@ -62,11 +62,10 @@
                     <ul class="nav flex-column">
                         <li class="nav-item"><a class="nav-link" href="dashboard.php">Home</a></li>
                         <li class="nav-item"><a class="nav-link" href="edit.php">Edit Profile</a></li>
-                        <li class="nav-item"><a class="nav-link" href="view_remaining_system.php">View Remaining Session</a></li>
-                        <li class="nav-item"><a class="nav-link" href="history.php">History</a></li>
-                        <li class="nav-item"><a class="nav-link" href="reservation.php">Reservation</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#">History</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#">Reservation</a></li>
                         <li class="nav-item"><a class="nav-link" href="login.php" onclick="return confirm('Are you sure you want to log out?');">Logout</a></li>
-                    </ul>
+                    </ul>ce
                 </div>
             </div>
     <div class="profile-container">

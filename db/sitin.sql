@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 24, 2025 at 06:19 PM
+-- Generation Time: Mar 27, 2025 at 05:16 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -58,8 +58,8 @@ CREATE TABLE `announcement` (
 --
 
 INSERT INTO `announcement` (`ID`, `TITLE`, `CONTENT`, `CREATED_AT`) VALUES
-(0, 'HW', 'Hello World', '2025-03-24 10:11:02'),
-(0, 'Hi', 'Hi Kalibutan', '2025-03-24 10:11:12');
+(1, 'HW', 'Hello World', '2025-03-24 10:11:02'),
+(2, 'Hi', 'Hi Kalibutan', '2025-03-24 10:11:12');
 
 -- --------------------------------------------------------
 
@@ -127,6 +127,12 @@ ALTER TABLE `admin`
   ADD PRIMARY KEY (`ID`);
 
 --
+-- Indexes for table `announcement`
+--
+ALTER TABLE `announcement`
+  ADD PRIMARY KEY (`ID`);
+
+--
 -- Indexes for table `sitin_records`
 --
 ALTER TABLE `sitin_records`
@@ -147,6 +153,12 @@ ALTER TABLE `user`
 --
 ALTER TABLE `admin`
   MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT for table `announcement`
+--
+ALTER TABLE `announcement`
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

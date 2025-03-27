@@ -20,7 +20,7 @@ if (isset($_SESSION['username'])) {
 }
 
 // Handle sit-out
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['sit_out_submit'])) {
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['time_out_submit'])) {
     $sit_id = $conn->real_escape_string($_POST['sit_id']);
     $timeout_time = date("Y-m-d H:i:s");
     
@@ -193,7 +193,7 @@ if (!$result) {
                         echo "<span class='me-2'>Sessions: " . htmlspecialchars($row['session_count']) . "</span>";
                         echo "<form method='POST' style='display: inline;'>";
                         echo "<input type='hidden' name='sit_id' value='" . $row['ID'] . "'>";
-                        echo "<button type='submit' name='sit_out_submit' class='btn-sitout'>Sit Out</button>";
+                        echo "<button type='submit' name='time_out_submit' class='btn-sitout'>Time Out</button>";
                         echo "</form>";
                         echo "</td>";
                         echo "</tr>";

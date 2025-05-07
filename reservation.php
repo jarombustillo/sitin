@@ -72,10 +72,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 }
 
 // Get user's active reservations
-$reservations_sql = "SELECT * FROM reservations 
-                    WHERE IDNO = ? AND DATE >= CURDATE() 
-                    AND STATUS != 'cancelled' 
-                    ORDER BY DATE, TIME_SLOT";
+$reservations_sql = "SELECT r.* FROM reservations r
+LEFT JOIN sitin_records s
+  ON r.IDNO = s.IDNO
+  AND r.LABORATORY = s.LABORATORY
+  AND r.DATE = DATE(s.TIME_IN)
+  AND r.TIME_SLOT = DATE_FORMAT(s.TIME_IN, '%H:%i-%H:%i')
+  AND s.TIME_OUT IS NOT NULL
+WHERE r.IDNO = ?
+  AND r.DATE >= CURDATE()
+  AND r.STATUS != 'cancelled'
+  AND s.ID IS NULL
+ORDER BY r.DATE, r.TIME_SLOT";
 $reservations_stmt = $conn->prepare($reservations_sql);
 $reservations_stmt->bind_param("s", $_SESSION['IDNO']);
 $reservations_stmt->execute();
@@ -255,6 +263,7 @@ $reservations = $reservations_stmt->get_result();
                                     <option value="">Choose a laboratory...</option>
                                     <option value="Lab 524">524</option>
                                     <option value="Lab 526">526</option>
+                                    <option value="Lab 528">528</option>
                                     <option value="Lab 530">530</option>
                                     <option value="Lab 542">542</option>
                                     <option value="Lab 544">544</option>

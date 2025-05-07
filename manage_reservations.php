@@ -132,6 +132,7 @@ $result = $conn->query($sql);
                     <li class="nav-item"><a class="nav-link" href="admin/feedback.php">Feedback</a></li>
                     <li class="nav-item"><a class="nav-link" href="labresources.php">Lab Resources</a></li>
                     <li class="nav-item"><a class="nav-link" href="reports.php">Reports</a></li>
+                    <li class="nav-item"><a class="nav-link" href="reward.php">Leaderboard</a></li>
                 </ul>
                 <a href="login.php?logout=true" class="btn btn-danger ms-auto">Logout</a>
             </div>
@@ -169,10 +170,12 @@ $result = $conn->query($sql);
                     <label for="laboratory" class="form-label">Laboratory</label>
                     <select name="laboratory" id="laboratory" class="form-select">
                         <option value="">All Laboratories</option>
-                        <option value="Lab 1" <?php echo isset($_GET['laboratory']) && $_GET['laboratory'] === 'Lab 1' ? 'selected' : ''; ?>>Laboratory 1</option>
-                        <option value="Lab 2" <?php echo isset($_GET['laboratory']) && $_GET['laboratory'] === 'Lab 2' ? 'selected' : ''; ?>>Laboratory 2</option>
-                        <option value="Lab 3" <?php echo isset($_GET['laboratory']) && $_GET['laboratory'] === 'Lab 3' ? 'selected' : ''; ?>>Laboratory 3</option>
-                        <option value="Lab 4" <?php echo isset($_GET['laboratory']) && $_GET['laboratory'] === 'Lab 4' ? 'selected' : ''; ?>>Laboratory 4</option>
+                        <option value="524" <?php echo isset($_GET['laboratory']) && $_GET['laboratory'] === '524' ? 'selected' : ''; ?>>Lab 524</option>
+                        <option value="526" <?php echo isset($_GET['laboratory']) && $_GET['laboratory'] === '526' ? 'selected' : ''; ?>>Lab 526</option>
+                        <option value="528" <?php echo isset($_GET['laboratory']) && $_GET['laboratory'] === '528' ? 'selected' : ''; ?>>Lab 528</option>
+                        <option value="530" <?php echo isset($_GET['laboratory']) && $_GET['laboratory'] === '530' ? 'selected' : ''; ?>>Lab 530</option>
+                        <option value="542" <?php echo isset($_GET['laboratory']) && $_GET['laboratory'] === '542' ? 'selected' : ''; ?>>Lab 542</option>
+                        <option value="544" <?php echo isset($_GET['laboratory']) && $_GET['laboratory'] === '544' ? 'selected' : ''; ?>>Lab 544</option>
                     </select>
                 </div>
                 <div class="col-md-3">

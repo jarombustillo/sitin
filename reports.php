@@ -8,32 +8,23 @@ if (!isset($_SESSION['is_admin']) || $_SESSION['is_admin'] !== true) {
     exit();
 }
 
-// Get date range from request or default to current month
-$start_date = isset($_GET['start_date']) ? $_GET['start_date'] : date('Y-m-01');
-$end_date = isset($_GET['end_date']) ? $_GET['end_date'] : date('Y-m-t');
-
-// Fetch sit-in statistics
+// Remove date range variables and use all records
 $sql_stats = "SELECT 
     COUNT(*) as total_sessions,
-    COUNT(DISTINCT IDNO) as unique_students,
     AVG(TIMESTAMPDIFF(MINUTE, TIME_IN, TIME_OUT)) as avg_duration
-    FROM sitin_records 
-    WHERE DATE(TIME_IN) BETWEEN ? AND ?";
+    FROM sitin_records";
 
 $stmt = $conn->prepare($sql_stats);
-$stmt->bind_param("ss", $start_date, $end_date);
 $stmt->execute();
 $stats = $stmt->get_result()->fetch_assoc();
 
 // Fetch laboratory usage
 $sql_labs = "SELECT LABORATORY, COUNT(*) as usage_count
     FROM sitin_records 
-    WHERE DATE(TIME_IN) BETWEEN ? AND ?
     GROUP BY LABORATORY
     ORDER BY usage_count DESC";
 
 $stmt = $conn->prepare($sql_labs);
-$stmt->bind_param("ss", $start_date, $end_date);
 $stmt->execute();
 $lab_usage = $stmt->get_result();
 
@@ -41,12 +32,10 @@ $lab_usage = $stmt->get_result();
 $sql_courses = "SELECT u.course, COUNT(*) as student_count
     FROM sitin_records sr
     JOIN user u ON sr.IDNO = u.IDNO
-    WHERE DATE(sr.TIME_IN) BETWEEN ? AND ?
     GROUP BY u.course
     ORDER BY student_count DESC";
 
 $stmt = $conn->prepare($sql_courses);
-$stmt->bind_param("ss", $start_date, $end_date);
 $stmt->execute();
 $course_dist = $stmt->get_result();
 
@@ -55,11 +44,9 @@ $sql_feedback = "SELECT
     AVG(RATING) as avg_rating,
     COUNT(*) as total_feedback
     FROM feedback f
-    JOIN sitin_records sr ON f.SITIN_RECORD_ID = sr.ID
-    WHERE DATE(sr.TIME_IN) BETWEEN ? AND ?";
+    JOIN sitin_records sr ON f.SITIN_RECORD_ID = sr.ID";
 
 $stmt = $conn->prepare($sql_feedback);
-$stmt->bind_param("ss", $start_date, $end_date);
 $stmt->execute();
 $feedback_stats = $stmt->get_result()->fetch_assoc();
 
@@ -68,12 +55,10 @@ $sql_daily = "SELECT
     DATE(TIME_IN) as date,
     COUNT(*) as session_count
     FROM sitin_records 
-    WHERE DATE(TIME_IN) BETWEEN ? AND ?
     GROUP BY DATE(TIME_IN)
     ORDER BY date";
 
 $stmt = $conn->prepare($sql_daily);
-$stmt->bind_param("ss", $start_date, $end_date);
 $stmt->execute();
 $daily_usage = $stmt->get_result();
 ?>
@@ -145,6 +130,7 @@ $daily_usage = $stmt->get_result();
                     <li class="nav-item"><a class="nav-link" href="admin/feedback.php">Feedback</a></li>
                     <li class="nav-item"><a class="nav-link" href="labresources.php">Lab Resources</a></li>
                     <li class="nav-item"><a class="nav-link active" href="reports.php">Reports</a></li>
+                    <li class="nav-item"><a class="nav-link" href="reward.php">Leaderboard</a></li>
                 </ul>
                 <a href="login.php?logout=true" class="logout-btn ms-auto">Log out</a>
             </div>
@@ -154,21 +140,23 @@ $daily_usage = $stmt->get_result();
     <div class="container mt-4">
         <h2>System Reports</h2>
 
-        <!-- Date Range Filter -->
+        <!-- Generate Report Button -->
         <div class="card report-card mb-4">
             <div class="card-body">
-                <form method="GET" class="row g-3">
-                    <div class="col-md-4">
-                        <label for="start_date" class="form-label">Start Date</label>
-                        <input type="date" class="form-control" id="start_date" name="start_date" value="<?php echo $start_date; ?>">
+                <form method="POST" action="generate_report.php" class="row g-3">
+                    <div class="col-md-6">
+                        <label for="report_format" class="form-label">Report Format</label>
+                        <select class="form-select" id="report_format" name="report_format" required>
+                            <option value="csv">CSV</option>
+                            <option value="excel">Excel</option>
+                            <option value="pdf">PDF</option>
+                            <option value="print">Print</option>
+                        </select>
                     </div>
-                    <div class="col-md-4">
-                        <label for="end_date" class="form-label">End Date</label>
-                        <input type="date" class="form-control" id="end_date" name="end_date" value="<?php echo $end_date; ?>">
-                    </div>
-                    <div class="col-md-4">
-                        <label class="form-label">&nbsp;</label>
-                        <button type="submit" class="btn btn-primary d-block">Generate Report</button>
+                    <div class="col-md-6 d-flex align-items-end">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-download me-2"></i>Generate Report
+                        </button>
                     </div>
                 </form>
             </div>
@@ -176,7 +164,7 @@ $daily_usage = $stmt->get_result();
 
         <!-- Summary Statistics -->
         <div class="row">
-            <div class="col-md-3">
+            <div class="col-md-4">
                 <div class="card report-card">
                     <div class="card-body">
                         <h5 class="card-title">Total Sessions</h5>
@@ -184,15 +172,7 @@ $daily_usage = $stmt->get_result();
                     </div>
                 </div>
             </div>
-            <div class="col-md-3">
-                <div class="card report-card">
-                    <div class="card-body">
-                        <h5 class="card-title">Unique Students</h5>
-                        <h2 class="card-text"><?php echo number_format($stats['unique_students']); ?></h2>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3">
+            <div class="col-md-4">
                 <div class="card report-card">
                     <div class="card-body">
                         <h5 class="card-title">Average Duration</h5>
@@ -200,7 +180,7 @@ $daily_usage = $stmt->get_result();
                     </div>
                 </div>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-4">
                 <div class="card report-card">
                     <div class="card-body">
                         <h5 class="card-title">Average Rating</h5>

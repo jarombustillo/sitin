@@ -104,6 +104,7 @@ if (!$result) {
                     <li class="nav-item"><a class="nav-link active" href="feedback.php">Feedback</a></li>
                     <li class="nav-item"><a class="nav-link" href="../labresources.php">Lab Resources</a></li>
                     <li class="nav-item"><a class="nav-link" href="../reports.php">Reports</a></li>
+                    <li class="nav-item"><a class="nav-link" href="../reward.php">Leaderboard</a></li>
                 </ul>
                 <a href="../login.php?logout=true" class="logout-btn ms-auto">Log out</a>
             </div>

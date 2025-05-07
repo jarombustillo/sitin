@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 07, 2025 at 04:56 AM
+-- Generation Time: May 07, 2025 at 07:29 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -118,6 +118,17 @@ CREATE TABLE `lab_resources` (
   `FILE_TYPE` varchar(50) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `lab_resources`
+--
+
+INSERT INTO `lab_resources` (`ID`, `TITLE`, `DESCRIPTION`, `CATEGORY`, `RESOURCE_TYPE`, `LINK`, `FILE_PATH`, `UPLOAD_DATE`, `FILE_NAME`, `FILE_TYPE`) VALUES
+(0, 'Sit In System', 'github repository', 'Programming', 'Other', 'https://github.com/jarombustillo/sitin', '', '2025-05-07 21:35:21', '', ''),
+(0, 'Xampp', 'xampp installer', 'Database', 'Other', 'https://www.apachefriends.org/', '', '2025-05-07 21:35:54', '', ''),
+(0, 'Visual Studio Code', 'visual studio code', 'Programming', 'Document', 'https://code.visualstudio.com/', '', '2025-05-07 21:37:03', '', ''),
+(0, 'About You ', 'About you - 1975', 'Other', 'Other', '', '681b6219c6d6b_aboutyou.jpg', '2025-05-07 21:37:29', 'aboutyou.jpg', 'jpg'),
+(0, 'Canvas', 'UC LMS', 'Programming', 'Document', 'https://universityofcebu.instructure.com/login/canvas', '', '2025-05-07 21:37:59', '', '');
+
 -- --------------------------------------------------------
 
 --
@@ -188,7 +199,9 @@ CREATE TABLE `reservations` (
 
 INSERT INTO `reservations` (`ID`, `IDNO`, `LABORATORY`, `PC_NUMBER`, `DATE`, `TIME_SLOT`, `PURPOSE`, `STATUS`, `CREATED_AT`, `UPDATED_AT`) VALUES
 (1, 1000, 'Lab 1', 2, '2025-05-07', '09:00-10:00', 'submitting a programming assignment', 'confirmed', '2025-05-06 16:13:57', '2025-05-06 16:28:51'),
-(2, 3000, 'Lab 524', 0, '2025-05-07', '08:00-09:00', 'docs purposes', 'confirmed', '2025-05-06 16:34:48', '2025-05-06 16:35:17');
+(2, 3000, 'Lab 524', 0, '2025-05-07', '08:00-09:00', 'docs purposes', 'confirmed', '2025-05-06 16:34:48', '2025-05-06 16:35:17'),
+(3, 1000, 'Lab 524', 3, '2025-05-08', '08:00-09:00', 'sss', 'cancelled', '2025-05-08 01:16:42', '2025-05-08 01:20:31'),
+(4, 1000, 'Lab 526', 1, '2025-05-09', '08:00-09:00', 'zzzz', 'confirmed', '2025-05-08 01:21:02', '2025-05-08 01:21:47');
 
 -- --------------------------------------------------------
 
@@ -202,6 +215,14 @@ CREATE TABLE `reward_points` (
   `POINTS` int(11) DEFAULT 0,
   `LAST_REWARD_DATE` date DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `reward_points`
+--
+
+INSERT INTO `reward_points` (`ID`, `STUDENT_ID`, `POINTS`, `LAST_REWARD_DATE`) VALUES
+(0, '1000', 1, '2025-05-08'),
+(0, '1000', 1, '2025-05-08');
 
 -- --------------------------------------------------------
 
@@ -227,7 +248,9 @@ INSERT INTO `sitin_records` (`ID`, `IDNO`, `PURPOSE`, `LABORATORY`, `TIME_IN`, `
 (1000, 0, 'Programming', '23', '0000-00-00 00:00:00', '2025-03-24 15:46:38'),
 (1001, 1000, 'Research', '', '2025-03-24 17:58:00', '2025-03-24 17:58:19'),
 (1002, 1000, 'C#', '530', '2025-03-24 18:12:52', '2025-03-24 18:15:15'),
-(1003, 1000, 'C#', '524', '2025-03-24 18:15:29', '2025-03-24 18:15:53');
+(1003, 1000, 'C#', '524', '2025-03-24 18:15:29', '2025-03-24 18:15:53'),
+(1004, 1000, 'ASP.Net', '530', '2025-05-07 19:00:37', '2025-05-07 19:01:12'),
+(1005, 1000, 'PHP', '524', '2025-05-07 19:22:18', '2025-05-07 19:22:47');
 
 -- --------------------------------------------------------
 
@@ -253,9 +276,9 @@ CREATE TABLE `user` (
 --
 
 INSERT INTO `user` (`IDNO`, `Lastname`, `Firstname`, `Midname`, `course`, `year_level`, `username`, `password`, `profilepic`, `session_count`) VALUES
-(1000, 'Bustillo', 'Jarom', '', 'BSIT', 3, 'jarom', '$2y$10$oBYe0lAvh75kYIAG1e.2GOX.L6oJRK3xQSM0zK064cknPwCU3q4lW', 'default.png', 27),
+(1000, 'Bustillo', 'Jarom', '', 'BSIT', 3, 'jarom', '$2y$10$oBYe0lAvh75kYIAG1e.2GOX.L6oJRK3xQSM0zK064cknPwCU3q4lW', 'default.png', 25),
 (2000, 'Doe', 'John', '', 'BSIT', 2, 'john.doe', '$2y$10$WsMO/pJPL/7WQWzCZBualuF6ER6.66geH41yBqXPHYHCxHsVk.UPi', 'default.png', 30),
-(3000, 'Mangubat', 'Marphine Faith', 'Jagdon', 'BSCS', 1, 'marphine', '$2y$10$gKSONNZcgY2OXCGLElMOjOGxqDiUfbI.7eGPDNCHNkLEg4EhocTs2', 'default.png', 30),
+(3000, 'Mangubat', 'Marphine Faith', 'Jagdon', 'BSCS', 1, 'marphine', '$2y$10$gKSONNZcgY2OXCGLElMOjOGxqDiUfbI.7eGPDNCHNkLEg4EhocTs2', 'user_1746637336.jpg', 30),
 (4000, 'Doe', 'Jane', '', 'BSCPE', 4, 'jane.doe', '$2y$10$23gW3R/EiRe58JTG2rZmT.X9XZUPCd7AHs4xpZsVkIx33a/bftHO2', 'default.png', 30);
 
 --
@@ -319,7 +342,7 @@ ALTER TABLE `announcement`
 -- AUTO_INCREMENT for table `reservations`
 --
 ALTER TABLE `reservations`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- Constraints for dumped tables

@@ -92,6 +92,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['sit_in_submit'])) {
                      VALUES ('$next_id', '$id_number', '$purpose', '$laboratory', '$checkin_time')";
         
         if ($conn->query($sql_sitin) === TRUE) {
+            // Award 1 point for sit-in
+            $reward_sql = "INSERT INTO reward_points (STUDENT_ID, POINTS, LAST_REWARD_DATE)
+                           VALUES ('$id_number', 1, CURDATE())
+                           ON DUPLICATE KEY UPDATE POINTS = POINTS + 1, LAST_REWARD_DATE = CURDATE()";
+            $conn->query($reward_sql);
             header("Location: admin.php?sitin_success=true");
             exit();
         } else {
@@ -329,6 +334,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update_announcement'])
                     <li class="nav-item"><a class="nav-link" href="admin/feedback.php">Feedback</a></li>
                     <li class="nav-item"><a class="nav-link" href="labresources.php">Lab Resources</a></li>
                     <li class="nav-item"><a class="nav-link" href="reports.php">Reports</a></li>
+                    <li class="nav-item"><a class="nav-link" href="reward.php">Leaderboard</a></li>
                 </ul>
                 <form class="d-flex" action="admin.php" method="GET">
                     <input class="form-control me-2" type="search" name="search" placeholder="Search by ID or Name" aria-label="Search" 

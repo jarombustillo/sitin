@@ -40,32 +40,46 @@
         .edit-button:hover {
             background-color: #0056b3;
         }
+        .logout-btn {
+            background-color: #e74c3c;
+            color: white !important;
+            padding: 8px 20px !important;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+            margin-left: 20px;
+            text-decoration: none;
+        }
+
+        .logout-btn:hover {
+            background-color: #c0392b;
+            color: white !important;
+            text-decoration: none;
+        }
         
         
         
 
     </style>
 <body>
-            <nav class="navbar navbar-dark bg-dark">
-                <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebarMenu">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <a class="navbar-brand" href="dashboard.php">Dashboard</a>
-            </nav>
-
-            <!-- Sidebar -->
-            <div class="offcanvas offcanvas-start bg-light" tabindex="-1" id="sidebarMenu">
-                <div class="offcanvas-header">
-                    <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
-                </div>
-                <div class="offcanvas-body">
-                    <ul class="nav flex-column">
-                        <li class="nav-item"><a class="nav-link" href="dashboard.php">Home</a></li>
-                        <li class="nav-item"><a class="nav-link" href="edit.php">Edit Profile</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#">History</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#">Reservation</a></li>
-                        <li class="nav-item"><a class="nav-link" href="login.php" onclick="return confirm('Are you sure you want to log out?');">Logout</a></li>
-                    </ul>ce
+<body class="d-flex flex-column min-vh-100">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="dashboard.php">Student</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item"><a class="nav-link active" href="edit.php">Edit Profile</a></li>
+                    <li class="nav-item"><a class="nav-link" href="history.php">History</a></li>
+                    <li class="nav-item"><a class="nav-link" href="reservation.php">Reservation</a></li>
+                    <li class="nav-item"><a class="nav-link" href="view_lab_resources.php">Lab Resources</a></li>
+                </ul>
+                <<a href="login.php?logout=true" class="logout-btn ms-auto">Log out</a>
+            </div>
+        </div>
+    </nav>
+                    </ul>
                 </div>
             </div>
     <div class="profile-container">

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 27, 2025 at 05:16 AM
+-- Generation Time: May 07, 2025 at 04:56 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -60,6 +60,148 @@ CREATE TABLE `announcement` (
 INSERT INTO `announcement` (`ID`, `TITLE`, `CONTENT`, `CREATED_AT`) VALUES
 (1, 'HW', 'Hello World', '2025-03-24 10:11:02'),
 (2, 'Hi', 'Hi Kalibutan', '2025-03-24 10:11:12');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `feedback`
+--
+
+CREATE TABLE `feedback` (
+  `ID` int(11) NOT NULL,
+  `SITIN_RECORD_ID` int(11) NOT NULL,
+  `STUDENT_ID` varchar(50) NOT NULL,
+  `RATING` int(1) NOT NULL,
+  `COMMENT` text DEFAULT NULL,
+  `CREATED_AT` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `feedback`
+--
+
+INSERT INTO `feedback` (`ID`, `SITIN_RECORD_ID`, `STUDENT_ID`, `RATING`, `COMMENT`, `CREATED_AT`) VALUES
+(0, 1003, '1000', 5, 'meh', '2025-05-06 02:59:56');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `labschedules`
+--
+
+CREATE TABLE `labschedules` (
+  `ID` int(11) NOT NULL,
+  `ROOM_NUMBER` varchar(10) DEFAULT NULL,
+  `DAY_GROUP` varchar(10) DEFAULT NULL,
+  `TIME_SLOT` varchar(20) DEFAULT NULL,
+  `STATUS` varchar(20) DEFAULT NULL,
+  `NOTES` text DEFAULT NULL,
+  `LAST_UPDATED` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `lab_resources`
+--
+
+CREATE TABLE `lab_resources` (
+  `ID` int(11) NOT NULL,
+  `TITLE` varchar(255) NOT NULL,
+  `DESCRIPTION` text DEFAULT NULL,
+  `CATEGORY` varchar(100) NOT NULL,
+  `RESOURCE_TYPE` varchar(50) NOT NULL,
+  `LINK` text NOT NULL,
+  `FILE_PATH` varchar(255) DEFAULT NULL,
+  `UPLOAD_DATE` datetime NOT NULL,
+  `FILE_NAME` varchar(255) DEFAULT NULL,
+  `FILE_TYPE` varchar(50) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `notifications`
+--
+
+CREATE TABLE `notifications` (
+  `ID` int(11) NOT NULL,
+  `USER_ID` int(11) DEFAULT NULL,
+  `MESSAGE` text DEFAULT NULL,
+  `TYPE` varchar(50) DEFAULT 'general',
+  `DETAILS` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`DETAILS`)),
+  `IS_READ` tinyint(1) DEFAULT 0,
+  `CREATED_AT` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `pc_status`
+--
+
+CREATE TABLE `pc_status` (
+  `ID` int(11) NOT NULL,
+  `ROOM_NUMBER` varchar(10) NOT NULL,
+  `PC_NUMBER` int(11) NOT NULL,
+  `STATUS` varchar(20) NOT NULL DEFAULT 'available',
+  `LAST_UPDATED` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `points_history`
+--
+
+CREATE TABLE `points_history` (
+  `ID` int(11) NOT NULL,
+  `IDNO` varchar(20) NOT NULL,
+  `FULLNAME` varchar(100) NOT NULL,
+  `POINTS_EARNED` int(11) DEFAULT 1,
+  `CONVERTED_TO_SESSION` tinyint(1) DEFAULT 0,
+  `CONVERSION_DATE` datetime NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `reservations`
+--
+
+CREATE TABLE `reservations` (
+  `ID` int(11) NOT NULL,
+  `IDNO` int(11) NOT NULL,
+  `LABORATORY` varchar(50) NOT NULL,
+  `PC_NUMBER` int(11) NOT NULL,
+  `DATE` date NOT NULL,
+  `TIME_SLOT` varchar(20) NOT NULL,
+  `PURPOSE` text NOT NULL,
+  `STATUS` enum('pending','confirmed','cancelled') NOT NULL DEFAULT 'pending',
+  `CREATED_AT` datetime NOT NULL,
+  `UPDATED_AT` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `reservations`
+--
+
+INSERT INTO `reservations` (`ID`, `IDNO`, `LABORATORY`, `PC_NUMBER`, `DATE`, `TIME_SLOT`, `PURPOSE`, `STATUS`, `CREATED_AT`, `UPDATED_AT`) VALUES
+(1, 1000, 'Lab 1', 2, '2025-05-07', '09:00-10:00', 'submitting a programming assignment', 'confirmed', '2025-05-06 16:13:57', '2025-05-06 16:28:51'),
+(2, 3000, 'Lab 524', 0, '2025-05-07', '08:00-09:00', 'docs purposes', 'confirmed', '2025-05-06 16:34:48', '2025-05-06 16:35:17');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `reward_points`
+--
+
+CREATE TABLE `reward_points` (
+  `ID` int(11) NOT NULL,
+  `STUDENT_ID` varchar(50) DEFAULT NULL,
+  `POINTS` int(11) DEFAULT 0,
+  `LAST_REWARD_DATE` date DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -133,6 +275,19 @@ ALTER TABLE `announcement`
   ADD PRIMARY KEY (`ID`);
 
 --
+-- Indexes for table `feedback`
+--
+ALTER TABLE `feedback`
+  ADD PRIMARY KEY (`ID`);
+
+--
+-- Indexes for table `reservations`
+--
+ALTER TABLE `reservations`
+  ADD PRIMARY KEY (`ID`),
+  ADD KEY `IDNO` (`IDNO`);
+
+--
 -- Indexes for table `sitin_records`
 --
 ALTER TABLE `sitin_records`
@@ -159,6 +314,22 @@ ALTER TABLE `admin`
 --
 ALTER TABLE `announcement`
   MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT for table `reservations`
+--
+ALTER TABLE `reservations`
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- Constraints for dumped tables
+--
+
+--
+-- Constraints for table `reservations`
+--
+ALTER TABLE `reservations`
+  ADD CONSTRAINT `reservations_ibfk_1` FOREIGN KEY (`IDNO`) REFERENCES `user` (`IDNO`) ON DELETE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

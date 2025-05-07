@@ -89,17 +89,19 @@ if (!$result) {
 </head>
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container-fluid">
-        <a class="navbar-brand" href="admin.php">College of Computer Studies Admin</a>
+        <a class="navbar-brand" href="admin.php">Admin</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav">
-                <li class="nav-item"><a class="nav-link" href="admin.php">Home</a></li>
                 <li class="nav-item"><a class="nav-link" href="students.php">Students</a></li>
                 <li class="nav-item"><a class="nav-link" href="current_sitin.php">Sit-In</a></li>
                 <li class="nav-item"><a class="nav-link active" href="sitinrecords.php">Sit-in Records</a></li>
-                <li class="nav-item"><a class="nav-link" href="#">Reports</a></li>
+                <li class="nav-item"><a class="nav-link" href="manage_reservations.php">Reservations</a></li>
+                <li class="nav-item"><a class="nav-link" href="admin/feedback.php">Feedback</a></li>
+                <li class="nav-item"><a class="nav-link" href="labresources.php">Lab Resources</a></li>
+                <li class="nav-item"><a class="nav-link" href="reports.php">Reports</a></li>
             </ul>
             <a href="login.php?logout=true" class="logout-btn ms-auto">Log out</a>
         </div>

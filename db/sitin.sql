@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 08, 2025 at 03:28 AM
+-- Generation Time: May 08, 2025 at 07:34 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -108,14 +108,14 @@ CREATE TABLE `labschedules` (
 CREATE TABLE `lab_resources` (
   `ID` int(11) NOT NULL,
   `TITLE` varchar(255) NOT NULL,
-  `DESCRIPTION` text DEFAULT NULL,
+  `DESCRIPTION` text NOT NULL,
   `CATEGORY` varchar(100) NOT NULL,
   `RESOURCE_TYPE` varchar(50) NOT NULL,
   `LINK` text NOT NULL,
-  `FILE_PATH` varchar(255) DEFAULT NULL,
+  `FILE_PATH` varchar(255) NOT NULL,
   `UPLOAD_DATE` datetime NOT NULL,
-  `FILE_NAME` varchar(255) DEFAULT NULL,
-  `FILE_TYPE` varchar(50) DEFAULT NULL
+  `FILE_NAME` varchar(255) NOT NULL,
+  `FILE_TYPE` varchar(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -123,11 +123,11 @@ CREATE TABLE `lab_resources` (
 --
 
 INSERT INTO `lab_resources` (`ID`, `TITLE`, `DESCRIPTION`, `CATEGORY`, `RESOURCE_TYPE`, `LINK`, `FILE_PATH`, `UPLOAD_DATE`, `FILE_NAME`, `FILE_TYPE`) VALUES
-(0, 'Sit In System', 'github repository', 'Programming', 'Other', 'https://github.com/jarombustillo/sitin', '', '2025-05-07 21:35:21', '', ''),
-(0, 'Xampp', 'xampp installer', 'Database', 'Other', 'https://www.apachefriends.org/', '', '2025-05-07 21:35:54', '', ''),
-(0, 'Visual Studio Code', 'visual studio code', 'Programming', 'Document', 'https://code.visualstudio.com/', '', '2025-05-07 21:37:03', '', ''),
-(0, 'About You ', 'About you - 1975', 'Other', 'Other', '', '681b6219c6d6b_aboutyou.jpg', '2025-05-07 21:37:29', 'aboutyou.jpg', 'jpg'),
-(0, 'Canvas', 'UC LMS', 'Programming', 'Document', 'https://universityofcebu.instructure.com/login/canvas', '', '2025-05-07 21:37:59', '', '');
+(1, 'Sit In System', 'github repository', 'Programming', 'Other', 'https://github.com/jarombustillo/sitin', '', '2025-05-07 21:35:21', '', ''),
+(2, 'Xampp', 'xampp installer', 'Database', 'Other', 'https://www.apachefriends.org/', '', '2025-05-07 21:35:54', '', ''),
+(3, 'Visual Studio Code', 'visual studio code', 'Programming', 'Document', 'https://code.visualstudio.com/', '', '2025-05-07 21:37:03', '', ''),
+(4, 'About You ', 'About you - 1975', 'Other', 'Other', '', '681b6219c6d6b_aboutyou.jpg', '2025-05-07 21:37:29', 'aboutyou.jpg', 'jpg'),
+(5, 'Canvas', 'UC LMS', 'Programming', 'Document', 'https://universityofcebu.instructure.com/login/canvas', '', '2025-05-07 21:37:59', '', '');
 
 -- --------------------------------------------------------
 
@@ -137,13 +137,20 @@ INSERT INTO `lab_resources` (`ID`, `TITLE`, `DESCRIPTION`, `CATEGORY`, `RESOURCE
 
 CREATE TABLE `notifications` (
   `ID` int(11) NOT NULL,
-  `USER_ID` int(11) DEFAULT NULL,
-  `MESSAGE` text DEFAULT NULL,
+  `USER_ID` int(11) NOT NULL,
+  `MESSAGE` text NOT NULL,
   `TYPE` varchar(50) DEFAULT 'general',
-  `DETAILS` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`DETAILS`)),
+  `DETAILS` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
   `IS_READ` tinyint(1) DEFAULT 0,
   `CREATED_AT` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `notifications`
+--
+
+INSERT INTO `notifications` (`ID`, `USER_ID`, `MESSAGE`, `TYPE`, `DETAILS`, `IS_READ`, `CREATED_AT`) VALUES
+(1, 0, 'New reservation submitted by student ID 2000 for Lab Lab 524, PC 47, 2025-05-08 (16:00-17:00).', 'admin', '', 0, '2025-05-08 05:24:39');
 
 -- --------------------------------------------------------
 
@@ -211,7 +218,10 @@ INSERT INTO `reservations` (`ID`, `IDNO`, `LABORATORY`, `PC_NUMBER`, `DATE`, `TI
 (1, 1000, 'Lab 1', 2, '2025-05-07', '09:00-10:00', 'submitting a programming assignment', 'confirmed', '2025-05-06 16:13:57', '2025-05-06 16:28:51'),
 (2, 3000, 'Lab 524', 0, '2025-05-07', '08:00-09:00', 'docs purposes', 'confirmed', '2025-05-06 16:34:48', '2025-05-06 16:35:17'),
 (3, 1000, 'Lab 524', 3, '2025-05-08', '08:00-09:00', 'sss', 'cancelled', '2025-05-08 01:16:42', '2025-05-08 01:20:31'),
-(4, 1000, 'Lab 526', 1, '2025-05-09', '08:00-09:00', 'zzzz', 'confirmed', '2025-05-08 01:21:02', '2025-05-08 01:21:47');
+(4, 1000, 'Lab 526', 1, '2025-05-09', '08:00-09:00', 'zzzz', 'confirmed', '2025-05-08 01:21:02', '2025-05-08 01:21:47'),
+(5, 3000, 'Lab 524', 2, '2025-05-08', '14:00-15:00', 'kkk', 'cancelled', '2025-05-08 13:13:28', '2025-05-08 13:21:14'),
+(6, 2000, 'Lab 526', 42, '2025-05-08', '16:00-17:00', 'huhu', 'cancelled', '2025-05-08 13:17:10', '2025-05-08 13:21:15'),
+(7, 2000, 'Lab 524', 47, '2025-05-08', '16:00-17:00', 'wewe', 'pending', '2025-05-08 13:24:39', '2025-05-08 13:24:39');
 
 -- --------------------------------------------------------
 
@@ -305,7 +315,8 @@ INSERT INTO `user` (`IDNO`, `Lastname`, `Firstname`, `Midname`, `course`, `year_
 (1000, 'Bustillo', 'Jarom', '', 'BSIT', 3, 'jarom', '$2y$10$oBYe0lAvh75kYIAG1e.2GOX.L6oJRK3xQSM0zK064cknPwCU3q4lW', 'default.png', 19),
 (2000, 'Doe', 'John', '', 'BSIT', 2, 'john.doe', '$2y$10$WsMO/pJPL/7WQWzCZBualuF6ER6.66geH41yBqXPHYHCxHsVk.UPi', 'default.png', 27),
 (3000, 'Mangubat', 'Marphine Faith', 'Jagdon', 'BSCS', 1, 'marphine', '$2y$10$gKSONNZcgY2OXCGLElMOjOGxqDiUfbI.7eGPDNCHNkLEg4EhocTs2', 'user_1746637336.jpg', 25),
-(4000, 'Doe', 'Jane', '', 'BSCPE', 4, 'jane.doe', '$2y$10$23gW3R/EiRe58JTG2rZmT.X9XZUPCd7AHs4xpZsVkIx33a/bftHO2', 'default.png', 30);
+(4000, 'Doe', 'Jane', '', 'BSCPE', 4, 'jane.doe', '$2y$10$23gW3R/EiRe58JTG2rZmT.X9XZUPCd7AHs4xpZsVkIx33a/bftHO2', 'default.png', 30),
+(5000, 'Barcenas', 'Ezekiel', '', 'BSCS', 1, 'ezekiel', '$2y$10$X0ZGJ4intn2lwB85y8SOl.FJsCt9Pc0/0qT4P1pzpXELvVsjsYP02', 'default.png', 30);
 
 --
 -- Indexes for dumped tables
@@ -333,6 +344,24 @@ ALTER TABLE `feedback`
 -- Indexes for table `labschedules`
 --
 ALTER TABLE `labschedules`
+  ADD PRIMARY KEY (`ID`);
+
+--
+-- Indexes for table `lab_resources`
+--
+ALTER TABLE `lab_resources`
+  ADD PRIMARY KEY (`ID`);
+
+--
+-- Indexes for table `notifications`
+--
+ALTER TABLE `notifications`
+  ADD PRIMARY KEY (`ID`);
+
+--
+-- Indexes for table `pc_status`
+--
+ALTER TABLE `pc_status`
   ADD PRIMARY KEY (`ID`);
 
 --
@@ -389,6 +418,24 @@ ALTER TABLE `labschedules`
   MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT for table `lab_resources`
+--
+ALTER TABLE `lab_resources`
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+
+--
+-- AUTO_INCREMENT for table `notifications`
+--
+ALTER TABLE `notifications`
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT for table `pc_status`
+--
+ALTER TABLE `pc_status`
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `points_history`
 --
 ALTER TABLE `points_history`
@@ -398,7 +445,7 @@ ALTER TABLE `points_history`
 -- AUTO_INCREMENT for table `reservations`
 --
 ALTER TABLE `reservations`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `reward_points`

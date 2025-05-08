@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         body {
             background-color: #f8f9fa;
@@ -107,7 +108,70 @@
                     <li class="nav-item"><a class="nav-link" href="reservation.php">Reservation</a></li>
                     <li class="nav-item"><a class="nav-link" href="view_lab_resources.php">Lab Resources</a></li>
                 </ul>
-                <<a href="login.php?logout=true" class="logout-btn ms-auto">Log out</a>
+                <?php
+                session_start();
+                include "connect.php";
+                require_once 'includes/notifications.php';
+                $user_id = isset($_SESSION['IDNO']) ? $_SESSION['IDNO'] : null;
+                $notification_count = $user_id ? getNotificationCount($conn, $user_id, 'user') : 0;
+                ?>
+                <div class="nav-item dropdown ms-auto">
+                    <a class="nav-link dropdown-toggle text-white" href="#" id="notificationsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fas fa-bell"></i>
+                        <?php if ($notification_count > 0): ?>
+                            <span class="badge bg-danger"><?php echo $notification_count; ?></span>
+                        <?php endif; ?>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="notificationsDropdown">
+                        <?php
+                        if ($user_id) {
+                            $notifications = getUnreadNotifications($conn, $user_id, 'user');
+                            if ($notifications->num_rows > 0):
+                                while ($notification = $notifications->fetch_assoc()):
+                                    $msg = htmlspecialchars($notification['MESSAGE']);
+                                    // Add icon/label based on message content
+                                    if (strpos($msg, 'reservation') !== false) {
+                                        $icon = '<i class="fas fa-calendar-check text-success"></i> ';
+                                    } elseif (strpos($msg, 'announcement') !== false) {
+                                        $icon = '<i class="fas fa-bullhorn text-info"></i> ';
+                                    } else {
+                                        $icon = '<i class="fas fa-info-circle text-primary"></i> ';
+                                    }
+                        ?>
+                            <li>
+                                <a class="dropdown-item" href="#" onclick="handleNotification(<?php echo $notification['ID']; ?>, '<?php echo htmlspecialchars($notification['MESSAGE']); ?>', event)">
+                                    <div class="d-flex align-items-center">
+                                        <div class="flex-grow-1">
+                                            <p class="mb-0"><?php echo $icon . $msg; ?></p>
+                                            <small class="text-muted">
+                                                <?php
+                                                if (isset($notification['CREATED_AT']) && strtotime($notification['CREATED_AT']) > 0) {
+                                                    echo date('M d, Y H:i', strtotime($notification['CREATED_AT']));
+                                                } else {
+                                                    echo '';
+                                                }
+                                                ?>
+                                            </small>
+                                        </div>
+                                    </div>
+                                </a>
+                            </li>
+                        <?php
+                                endwhile;
+                            else:
+                        ?>
+                            <li><a class="dropdown-item" href="#">No new notifications</a></li>
+                        <?php
+                            endif;
+                        } else {
+                        ?>
+                            <li><a class="dropdown-item" href="#">Please log in to see notifications</a></li>
+                        <?php } ?>
+            </div>
+                <a href="login.php?logout=true" class="logout-btn ms-2">Log out</a>
+            </div>
+                    </ul>
+                </div>
             </div>
         </div>
     </nav>
@@ -116,7 +180,6 @@
         <!-- Main Content -->
         <main role="main" class="px-md-4">
             <?php
-            session_start();
             include "connect.php";
 
             if (isset($_SESSION['username'])) {
@@ -253,5 +316,51 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function handleNotification(notificationId, message, event) {
+            // Prevent default link behavior
+            event.preventDefault();
+            
+            // Mark as read in the background
+            fetch('mark_notification_read.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: 'notification_id=' + notificationId
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Update the notification count without reloading
+                    const badge = document.querySelector('.badge');
+                    if (badge) {
+                        const currentCount = parseInt(badge.textContent);
+                        if (currentCount > 0) {
+                            badge.textContent = currentCount - 1;
+                            if (currentCount - 1 === 0) {
+                                badge.style.display = 'none';
+                            }
+                        }
+                    }
+                    
+                    // Handle different types of notifications
+                    if (message.includes('sit-in')) {
+                        // Redirect to history page
+                        window.location.href = 'history.php';
+                    } else if (message.includes('reservation')) {
+                        // Redirect to reservation page
+                        window.location.href = 'reservation.php';
+                    } else if (message.includes('announcement')) {
+                        // Scroll to announcements section
+                        document.querySelector('.announcement-box').scrollIntoView({ behavior: 'smooth' });
+                    } else if (message.includes('points')) {
+                        // Redirect to history page to show points
+                        window.location.href = 'history.php';
+                    }
+                }
+            });
+        }
+    </script>
 </body>
 </html>

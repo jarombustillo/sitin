@@ -62,6 +62,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 if ($insert_stmt->bind_param("ssssss", $_SESSION['IDNO'], $laboratory, $pc_number, $date, $time_slot, $purpose)) {
                     if ($insert_stmt->execute()) {
                         $message = "Reservation submitted successfully!";
+                        // Notify admin of new reservation
+                        require_once 'includes/notifications.php';
+                        $student_id = $_SESSION['IDNO'];
+                        $msg = "New reservation submitted by student ID $student_id for Lab $laboratory, PC $pc_number, $date ($time_slot).";
+                        createNotification($conn, 'admin', $msg, 'admin');
                     } else {
                         $error = "Error submitting reservation. Please try again.";
                     }
@@ -250,57 +255,41 @@ $reservations = $reservations_stmt->get_result();
 
         <div class="row">
             <!-- Reservation Form -->
-            <div class="col-md-8">
-                <div class="card reservation-card">
+            <div class="col-md-6">
+                <div class="card">
                     <div class="card-header">
-                        <h5 class="mb-0">Make a Reservation</h5>
+                        <h5 class="mb-0">Reservation Form</h5>
                     </div>
                     <div class="card-body">
                         <form method="POST" action="">
                             <div class="mb-3">
-                                <label for="laboratory" class="form-label">Select Laboratory</label>
+                                <label for="laboratory" class="form-label">Laboratory</label>
                                 <select class="form-select" id="laboratory" name="laboratory" required>
-                                    <option value="">Choose a laboratory...</option>
-                                    <option value="Lab 524">524</option>
-                                    <option value="Lab 526">526</option>
-                                    <option value="Lab 528">528</option>
-                                    <option value="Lab 530">530</option>
-                                    <option value="Lab 542">542</option>
-                                    <option value="Lab 544">544</option>
+                                    <option value="">Select Laboratory</option>
+                                    <option value="524">Lab 524</option>
+                                    <option value="526">Lab 526</option>
+                                    <option value="528">Lab 528</option>
+                                    <option value="530">Lab 530</option>
+                                    <option value="542">Lab 542</option>
+                                    <option value="544">Lab 544</option>
                                 </select>
                             </div>
 
                             <div class="mb-3">
-                                <label class="form-label">Select PC</label>
-                                <div class="pc-grid">
-                                    <?php for ($i = 1; $i <= 50; $i++): ?>
-                                        <div class="pc-item" data-pc="<?php echo $i; ?>">
-                                            PC <?php echo $i; ?>
-                                        </div>
-                                    <?php endfor; ?>
-                                </div>
-                                <input type="hidden" name="pc_number" id="pc_number" required>
+                                <label for="pc_number" class="form-label">PC Number</label>
+                                <input type="number" class="form-control" id="pc_number" name="pc_number" required>
                             </div>
 
                             <div class="mb-3">
-                                <label for="date" class="form-label">Select Date</label>
-                                <input type="date" class="form-control" id="date" name="date" 
-                                       min="<?php echo date('Y-m-d'); ?>" required>
+                                <label for="date" class="form-label">Date</label>
+                                <input type="date" class="form-control" id="date" name="date" required>
                             </div>
 
                             <div class="mb-3">
-                                <label class="form-label">Select Time Slot</label>
-                                <div class="time-slots">
-                                    <div class="time-slot" data-time="08:00-09:00">8:00 AM - 9:00 AM</div>
-                                    <div class="time-slot" data-time="09:00-10:00">9:00 AM - 10:00 AM</div>
-                                    <div class="time-slot" data-time="10:00-11:00">10:00 AM - 11:00 AM</div>
-                                    <div class="time-slot" data-time="11:00-12:00">11:00 AM - 12:00 PM</div>
-                                    <div class="time-slot" data-time="13:00-14:00">1:00 PM - 2:00 PM</div>
-                                    <div class="time-slot" data-time="14:00-15:00">2:00 PM - 3:00 PM</div>
-                                    <div class="time-slot" data-time="15:00-16:00">3:00 PM - 4:00 PM</div>
-                                    <div class="time-slot" data-time="16:00-17:00">4:00 PM - 5:00 PM</div>
-                                </div>
-                                <input type="hidden" name="time_slot" id="time_slot" required>
+                                <label for="time_slot" class="form-label">Time Slot</label>
+                                <select class="form-select" id="time_slot" name="time_slot" required>
+                                    <option value="">Select Time Slot</option>
+                                </select>
                             </div>
 
                             <div class="mb-3">
@@ -315,28 +304,15 @@ $reservations = $reservations_stmt->get_result();
             </div>
 
             <!-- Active Reservations -->
-            <div class="col-md-4">
-                <div class="card reservation-card">
+            <div class="col-md-6">
+                <div class="card">
                     <div class="card-header">
-                        <h5 class="mb-0">Your Active Reservations</h5>
+                        <h5 class="mb-0">Available Schedules</h5>
                     </div>
                     <div class="card-body">
-                        <?php if ($reservations->num_rows > 0): ?>
-                            <?php while ($reservation = $reservations->fetch_assoc()): ?>
-                                <div class="reservation-item mb-3">
-                                    <h6>Lab <?php echo htmlspecialchars($reservation['LABORATORY']); ?> - PC <?php echo htmlspecialchars($reservation['PC_NUMBER']); ?></h6>
-                                    <p class="mb-1">Date: <?php echo date('M d, Y', strtotime($reservation['DATE'])); ?></p>
-                                    <p class="mb-1">Time: <?php echo htmlspecialchars($reservation['TIME_SLOT']); ?></p>
-                                    <p class="mb-1">Purpose: <?php echo htmlspecialchars($reservation['PURPOSE']); ?></p>
-                                    <span class="status-badge status-<?php echo strtolower($reservation['STATUS']); ?>">
-                                        <?php echo ucfirst($reservation['STATUS']); ?>
-                                    </span>
-                                </div>
-                                <hr>
-                            <?php endwhile; ?>
-                        <?php else: ?>
-                            <p class="text-center">No active reservations.</p>
-                        <?php endif; ?>
+                        <div id="scheduleList">
+                            <p class="text-muted">Select a laboratory to view available schedules.</p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -345,69 +321,66 @@ $reservations = $reservations_stmt->get_result();
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // Time Slot Selection
-        document.querySelectorAll('.time-slot').forEach(item => {
-            item.addEventListener('click', function() {
-                document.querySelectorAll('.time-slot').forEach(slot => slot.classList.remove('selected'));
-                this.classList.add('selected');
-                document.getElementById('time_slot').value = this.dataset.time;
-            });
-        });
-
-        // Check PC availability when laboratory or date changes
-        document.getElementById('laboratory').addEventListener('change', checkAvailability);
-        document.getElementById('date').addEventListener('change', checkAvailability);
-
-        function checkAvailability() {
-            const laboratory = document.getElementById('laboratory').value;
+        document.getElementById('laboratory').addEventListener('change', function() {
+            const lab = this.value;
             const date = document.getElementById('date').value;
+            if (lab && date) {
+                fetchSchedules(lab, date);
+            }
+        });
+
+        document.getElementById('date').addEventListener('change', function() {
+            const lab = document.getElementById('laboratory').value;
+            const date = this.value;
+            if (lab && date) {
+                fetchSchedules(lab, date);
+            }
+        });
+
+        function fetchSchedules(lab, date) {
+            const dayOfWeek = new Date(date).toLocaleDateString('en-US', { weekday: 'long' });
             
-            if (laboratory && date) {
-                // Here you would typically make an AJAX call to check availability
-                // For now, we'll just simulate it
-                document.querySelectorAll('.pc-item').forEach(pc => {
-                    pc.classList.remove('reserved');
-                    // Randomly mark some PCs as reserved for demonstration
-                    if (Math.random() > 0.7) {
-                        pc.classList.add('reserved');
+            fetch('get_schedules.php?lab=' + lab + '&day=' + dayOfWeek)
+                .then(response => response.json())
+                .then(data => {
+                    const scheduleList = document.getElementById('scheduleList');
+                    const timeSlotSelect = document.getElementById('time_slot');
+                    
+                    // Clear existing options
+                    timeSlotSelect.innerHTML = '<option value="">Select Time Slot</option>';
+                    
+                    if (data.length > 0) {
+                        let html = '<div class="table-responsive"><table class="table table-bordered">';
+                        html += '<thead><tr><th>Time Slot</th><th>Status</th><th>Notes</th></tr></thead><tbody>';
+                        
+                        data.forEach(schedule => {
+                            if (schedule.STATUS === 'Available') {
+                                // Add to time slot dropdown
+                                const option = document.createElement('option');
+                                option.value = schedule.TIME_SLOT;
+                                option.textContent = schedule.TIME_SLOT;
+                                timeSlotSelect.appendChild(option);
+                            }
+                            
+                            // Add to schedule table
+                            html += `<tr>
+                                <td>${schedule.TIME_SLOT}</td>
+                                <td><span class="badge bg-${schedule.STATUS === 'Available' ? 'success' : 'warning'}">${schedule.STATUS}</span></td>
+                                <td>${schedule.NOTES || '-'}</td>
+                            </tr>`;
+                        });
+                        
+                        html += '</tbody></table></div>';
+                        scheduleList.innerHTML = html;
+                    } else {
+                        scheduleList.innerHTML = '<p class="text-muted">No schedules available for this laboratory on the selected day.</p>';
                     }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    document.getElementById('scheduleList').innerHTML = '<p class="text-danger">Error loading schedules.</p>';
                 });
-            }
         }
-
-        // Add form validation before submit
-        document.querySelector('form').addEventListener('submit', function(e) {
-            const laboratory = document.getElementById('laboratory');
-            const pcNumber = document.getElementById('pc_number');
-            const date = document.getElementById('date');
-            const timeSlot = document.getElementById('time_slot');
-            const purpose = document.getElementById('purpose');
-
-            if (!laboratory.value) {
-                e.preventDefault();
-                alert('Please select a laboratory.');
-                return false;
-            }
-            if (!timeSlot.value) {
-                e.preventDefault();
-                alert('Please select a time slot.');
-                return false;
-            }
-            if (!purpose.value.trim()) {
-                e.preventDefault();
-                alert('Please enter a purpose.');
-                return false;
-            }
-        });
-
-        // PC Selection
-        document.querySelectorAll('.pc-item').forEach(item => {
-            item.addEventListener('click', function() {
-                document.querySelectorAll('.pc-item').forEach(pc => pc.classList.remove('selected'));
-                this.classList.add('selected');
-                document.getElementById('pc_number').value = this.dataset.pc;
-            });
-        });
     </script>
 </body>
 </html> 

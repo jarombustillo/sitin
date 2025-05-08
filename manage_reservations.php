@@ -26,6 +26,32 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             if ($stmt->bind_param("si", $new_status, $reservation_id)) {
                 if ($stmt->execute()) {
                     $message = "Reservation has been " . $new_status;
+                    
+                    // Get reservation details for notification
+                    $reservation_sql = "SELECT r.*, u.Firstname, u.Lastname 
+                                      FROM reservations r 
+                                      JOIN user u ON r.IDNO = u.IDNO 
+                                      WHERE r.ID = ?";
+                    $reservation_stmt = $conn->prepare($reservation_sql);
+                    $reservation_stmt->bind_param("i", $reservation_id);
+                    $reservation_stmt->execute();
+                    $reservation_result = $reservation_stmt->get_result();
+                    $reservation = $reservation_result->fetch_assoc();
+                    
+                    if ($reservation) {
+                        require_once 'includes/notifications.php';
+                        
+                        // Create notification for student
+                        $student_message = "Your reservation for Lab {$reservation['LABORATORY']}, PC {$reservation['PC_NUMBER']} on " . 
+                                         date('M d, Y', strtotime($reservation['DATE'])) . 
+                                         " ({$reservation['TIME_SLOT']}) has been " . $new_status;
+                        createNotification($conn, $reservation['IDNO'], $student_message, 'user');
+                        
+                        // Create notification for admin
+                        $admin_message = "Reservation for {$reservation['Firstname']} {$reservation['Lastname']} " .
+                                       "(Lab {$reservation['LABORATORY']}, PC {$reservation['PC_NUMBER']}) has been " . $new_status;
+                        createNotification($conn, 'admin', $admin_message, 'admin');
+                    }
                 } else {
                     $error = "Error updating reservation status.";
                 }

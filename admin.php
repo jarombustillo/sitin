@@ -109,6 +109,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['sit_in_submit'])) {
                             VALUES ('$id_number', '$fullname', 10, NOW())";
             $conn->query($history_sql);
 
+            // Create notifications
+            require_once 'includes/notifications.php';
+            
+            // Admin notification
+            createNotification($conn, 'admin', "New sit-in recorded for $fullname in $laboratory", 'admin');
+            
+            // User notification
+            createNotification($conn, $id_number, "You earned 10 points for your sit-in in $laboratory", 'user');
+
             header("Location: admin.php?sitin_success=true");
             exit();
         } else {
@@ -221,6 +230,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update_announcement'])
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         /* Basic dashboard styling - Customize as needed */
         body {
@@ -348,12 +358,50 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update_announcement'])
                     <li class="nav-item"><a class="nav-link" href="reports.php">Reports</a></li>
                     <li class="nav-item"><a class="nav-link" href="reward.php">Leaderboard</a></li>
                 </ul>
-                <form class="d-flex" action="admin.php" method="GET">
-                    <input class="form-control me-2" type="search" name="search" placeholder="Search by ID or Name" aria-label="Search" 
-                           value="<?php echo isset($_GET['search']) ? htmlspecialchars($_GET['search']) : ''; ?>">
-                    <button class="btn btn-outline-light" type="submit">Search</button>
-                </form>
-                <a href="login.php?logout=true" class="logout-btn ms-auto">Log out</a>
+                <?php
+                require_once 'includes/notifications.php';
+                $notification_count = getNotificationCount($conn, 'admin', 'admin');
+                ?>
+                <div class="nav-item dropdown ms-auto">
+                    <a class="nav-link dropdown-toggle text-white" href="#" id="notificationsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fas fa-bell"></i>
+                        <?php if ($notification_count > 0): ?>
+                            <span class="badge bg-danger"><?php echo $notification_count; ?></span>
+                        <?php endif; ?>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="notificationsDropdown">
+                        <?php
+                        $notifications = getUnreadNotifications($conn, 'admin', 'admin');
+                        if ($notifications->num_rows > 0):
+                            while ($notification = $notifications->fetch_assoc()):
+                        ?>
+                            <li>
+                                <a class="dropdown-item" href="#" onclick="handleNotification(<?php echo $notification['ID']; ?>, '<?php echo htmlspecialchars($notification['MESSAGE']); ?>', event)">
+                                    <div class="d-flex align-items-center">
+                                        <div class="flex-grow-1">
+                                            <p class="mb-0"><?php echo isset($notification['MESSAGE']) ? htmlspecialchars($notification['MESSAGE']) : 'No message'; ?></p>
+                                            <small class="text-muted">
+                                                <?php
+                                                if (isset($notification['CREATED_AT']) && strtotime($notification['CREATED_AT']) > 0) {
+                                                    echo date('M d, Y H:i', strtotime($notification['CREATED_AT']));
+                                                } else {
+                                                    echo '';
+                                                }
+                                                ?>
+                                            </small>
+                                        </div>
+                                    </div>
+                                </a>
+                            </li>
+                        <?php
+                            endwhile;
+                        else:
+                        ?>
+                            <li><a class="dropdown-item" href="#">No new notifications</a></li>
+                        <?php endif; ?>
+                    </ul>
+                </div>
+                <a href="login.php?logout=true" class="logout-btn ms-2">Log out</a>
             </div>
         </div>
     </nav>
@@ -644,6 +692,48 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update_announcement'])
                 }
             }
         });
+
+        function handleNotification(notificationId, message, event) {
+            // Prevent default link behavior
+            event.preventDefault();
+            
+            // Mark as read in the background
+            fetch('mark_notification_read.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: 'notification_id=' + notificationId
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Update the notification count without reloading
+                    const badge = document.querySelector('.badge');
+                    if (badge) {
+                        const currentCount = parseInt(badge.textContent);
+                        if (currentCount > 0) {
+                            badge.textContent = currentCount - 1;
+                            if (currentCount - 1 === 0) {
+                                badge.style.display = 'none';
+                            }
+                        }
+                    }
+                    
+                    // Handle different types of notifications
+                    if (message.includes('sit-in')) {
+                        // Redirect to sit-in records
+                        window.location.href = 'sitinrecords.php';
+                    } else if (message.includes('reservation')) {
+                        // Redirect to reservations
+                        window.location.href = 'manage_reservations.php';
+                    } else if (message.includes('announcement')) {
+                        // Scroll to announcements section
+                        document.querySelector('section h3:contains("Post Announcement")').scrollIntoView({ behavior: 'smooth' });
+                    }
+                }
+            });
+        }
     </script>
 </body>
 </html>

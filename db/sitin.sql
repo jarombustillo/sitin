@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 07, 2025 at 07:29 PM
+-- Generation Time: May 08, 2025 at 03:28 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -174,6 +174,16 @@ CREATE TABLE `points_history` (
   `CONVERSION_DATE` datetime NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `points_history`
+--
+
+INSERT INTO `points_history` (`ID`, `IDNO`, `FULLNAME`, `POINTS_EARNED`, `CONVERTED_TO_SESSION`, `CONVERSION_DATE`) VALUES
+(1, '1000', 'Jarom Bustillo', 10, 0, '2025-05-08 09:21:10'),
+(2, '2000', 'John Doe', 10, 0, '2025-05-08 09:21:21'),
+(3, '3000', 'Marphine Faith Mangubat', 10, 0, '2025-05-08 09:21:32'),
+(4, '1000', 'Jarom Bustillo', 10, 0, '2025-05-08 09:22:56');
+
 -- --------------------------------------------------------
 
 --
@@ -221,8 +231,10 @@ CREATE TABLE `reward_points` (
 --
 
 INSERT INTO `reward_points` (`ID`, `STUDENT_ID`, `POINTS`, `LAST_REWARD_DATE`) VALUES
-(0, '1000', 1, '2025-05-08'),
-(0, '1000', 1, '2025-05-08');
+(13, '1000', 10, '2025-05-08'),
+(14, '2000', 10, '2025-05-08'),
+(15, '3000', 10, '2025-05-08'),
+(16, '1000', 10, '2025-05-08');
 
 -- --------------------------------------------------------
 
@@ -250,7 +262,21 @@ INSERT INTO `sitin_records` (`ID`, `IDNO`, `PURPOSE`, `LABORATORY`, `TIME_IN`, `
 (1002, 1000, 'C#', '530', '2025-03-24 18:12:52', '2025-03-24 18:15:15'),
 (1003, 1000, 'C#', '524', '2025-03-24 18:15:29', '2025-03-24 18:15:53'),
 (1004, 1000, 'ASP.Net', '530', '2025-05-07 19:00:37', '2025-05-07 19:01:12'),
-(1005, 1000, 'PHP', '524', '2025-05-07 19:22:18', '2025-05-07 19:22:47');
+(1005, 1000, 'PHP', '524', '2025-05-07 19:22:18', '2025-05-07 19:22:47'),
+(1006, 3000, 'Java', '530', '2025-05-08 03:01:38', '2025-05-08 03:01:55'),
+(1007, 3000, 'Python', '526', '2025-05-08 03:02:14', '2025-05-08 03:07:09'),
+(1008, 1000, 'C', '530', '2025-05-08 03:06:54', '2025-05-08 03:07:10'),
+(1009, 1000, 'C#', '526', '2025-05-08 03:07:34', '2025-05-08 03:08:59'),
+(1010, 3000, 'C#', '524', '2025-05-08 03:07:48', '2025-05-08 03:08:57'),
+(1011, 2000, 'ASP.Net', '530', '2025-05-08 03:08:04', '2025-05-08 03:08:57'),
+(1012, 1000, 'Python', '526', '2025-05-08 03:11:49', '2025-05-08 03:13:18'),
+(1013, 1000, 'Java', '526', '2025-05-08 03:17:23', '2025-05-08 03:20:54'),
+(1014, 2000, 'C', '542', '2025-05-08 03:17:33', '2025-05-08 03:20:53'),
+(1015, 3000, 'Python', '530', '2025-05-08 03:17:48', '2025-05-08 03:20:52'),
+(1016, 1000, 'PHP', '524', '2025-05-08 03:21:10', '2025-05-08 03:22:28'),
+(1017, 2000, 'Java', '544', '2025-05-08 03:21:21', '2025-05-08 03:22:28'),
+(1018, 3000, 'Python', '526', '2025-05-08 03:21:32', '2025-05-08 03:22:27'),
+(1019, 1000, 'C#', '530', '2025-05-08 03:22:56', '2025-05-08 03:23:47');
 
 -- --------------------------------------------------------
 
@@ -276,9 +302,9 @@ CREATE TABLE `user` (
 --
 
 INSERT INTO `user` (`IDNO`, `Lastname`, `Firstname`, `Midname`, `course`, `year_level`, `username`, `password`, `profilepic`, `session_count`) VALUES
-(1000, 'Bustillo', 'Jarom', '', 'BSIT', 3, 'jarom', '$2y$10$oBYe0lAvh75kYIAG1e.2GOX.L6oJRK3xQSM0zK064cknPwCU3q4lW', 'default.png', 25),
-(2000, 'Doe', 'John', '', 'BSIT', 2, 'john.doe', '$2y$10$WsMO/pJPL/7WQWzCZBualuF6ER6.66geH41yBqXPHYHCxHsVk.UPi', 'default.png', 30),
-(3000, 'Mangubat', 'Marphine Faith', 'Jagdon', 'BSCS', 1, 'marphine', '$2y$10$gKSONNZcgY2OXCGLElMOjOGxqDiUfbI.7eGPDNCHNkLEg4EhocTs2', 'user_1746637336.jpg', 30),
+(1000, 'Bustillo', 'Jarom', '', 'BSIT', 3, 'jarom', '$2y$10$oBYe0lAvh75kYIAG1e.2GOX.L6oJRK3xQSM0zK064cknPwCU3q4lW', 'default.png', 19),
+(2000, 'Doe', 'John', '', 'BSIT', 2, 'john.doe', '$2y$10$WsMO/pJPL/7WQWzCZBualuF6ER6.66geH41yBqXPHYHCxHsVk.UPi', 'default.png', 27),
+(3000, 'Mangubat', 'Marphine Faith', 'Jagdon', 'BSCS', 1, 'marphine', '$2y$10$gKSONNZcgY2OXCGLElMOjOGxqDiUfbI.7eGPDNCHNkLEg4EhocTs2', 'user_1746637336.jpg', 25),
 (4000, 'Doe', 'Jane', '', 'BSCPE', 4, 'jane.doe', '$2y$10$23gW3R/EiRe58JTG2rZmT.X9XZUPCd7AHs4xpZsVkIx33a/bftHO2', 'default.png', 30);
 
 --
@@ -304,11 +330,29 @@ ALTER TABLE `feedback`
   ADD PRIMARY KEY (`ID`);
 
 --
+-- Indexes for table `labschedules`
+--
+ALTER TABLE `labschedules`
+  ADD PRIMARY KEY (`ID`);
+
+--
+-- Indexes for table `points_history`
+--
+ALTER TABLE `points_history`
+  ADD PRIMARY KEY (`ID`);
+
+--
 -- Indexes for table `reservations`
 --
 ALTER TABLE `reservations`
   ADD PRIMARY KEY (`ID`),
   ADD KEY `IDNO` (`IDNO`);
+
+--
+-- Indexes for table `reward_points`
+--
+ALTER TABLE `reward_points`
+  ADD PRIMARY KEY (`ID`);
 
 --
 -- Indexes for table `sitin_records`
@@ -339,10 +383,28 @@ ALTER TABLE `announcement`
   MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
+-- AUTO_INCREMENT for table `labschedules`
+--
+ALTER TABLE `labschedules`
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `points_history`
+--
+ALTER TABLE `points_history`
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
 -- AUTO_INCREMENT for table `reservations`
 --
 ALTER TABLE `reservations`
   MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
+-- AUTO_INCREMENT for table `reward_points`
+--
+ALTER TABLE `reward_points`
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- Constraints for dumped tables

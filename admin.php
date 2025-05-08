@@ -92,11 +92,23 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['sit_in_submit'])) {
                      VALUES ('$next_id', '$id_number', '$purpose', '$laboratory', '$checkin_time')";
         
         if ($conn->query($sql_sitin) === TRUE) {
-            // Award 1 point for sit-in
+            // Award 10 points for sit-in
             $reward_sql = "INSERT INTO reward_points (STUDENT_ID, POINTS, LAST_REWARD_DATE)
-                           VALUES ('$id_number', 1, CURDATE())
-                           ON DUPLICATE KEY UPDATE POINTS = POINTS + 1, LAST_REWARD_DATE = CURDATE()";
+                           VALUES ('$id_number', 10, CURDATE())
+                           ON DUPLICATE KEY UPDATE POINTS = POINTS + 10, LAST_REWARD_DATE = CURDATE()";
             $conn->query($reward_sql);
+
+            // Get student full name for history
+            $student_sql = "SELECT CONCAT(Firstname, ' ', Lastname) AS fullname FROM user WHERE IDNO = '$id_number'";
+            $student_result = $conn->query($student_sql);
+            $student_row = $student_result->fetch_assoc();
+            $fullname = $student_row ? $student_row['fullname'] : '';
+
+            // Insert into points history
+            $history_sql = "INSERT INTO points_history (IDNO, FULLNAME, POINTS_EARNED, CONVERSION_DATE) 
+                            VALUES ('$id_number', '$fullname', 10, NOW())";
+            $conn->query($history_sql);
+
             header("Location: admin.php?sitin_success=true");
             exit();
         } else {

@@ -74,11 +74,18 @@ if (isset($_POST['convert_to_session'])) {
 }
 
 // Get all students with their points
-$sql = "SELECT u.IDNO, u.Firstname, u.Lastname, u.course, u.year_level, u.session_count, 
-        COALESCE(rp.POINTS, 0) as points, rp.LAST_REWARD_DATE,
-        RANK() OVER (ORDER BY COALESCE(rp.POINTS, 0) DESC) as rank
+$sql = "SELECT 
+            u.IDNO, 
+            u.Firstname, 
+            u.Lastname, 
+            u.course, 
+            u.year_level, 
+            u.session_count, 
+            COALESCE(SUM(rp.POINTS), 0) as points,
+            MAX(rp.LAST_REWARD_DATE) as LAST_REWARD_DATE
         FROM user u
         LEFT JOIN reward_points rp ON u.IDNO = rp.STUDENT_ID
+        GROUP BY u.IDNO, u.Firstname, u.Lastname, u.course, u.year_level, u.session_count
         ORDER BY points DESC, u.Lastname, u.Firstname";
 $result = $conn->query($sql);
 
@@ -311,26 +318,43 @@ $history_result = $conn->query($history_sql);
             <div class="col-md-12">
                 <div class="card leaderboard-card">
                     <div class="card-header bg-primary text-white">
-                        <h5 class="card-title mb-0">Recent Points History</h5>
+                        <h5 class="card-title mb-0">Points History</h5>
                     </div>
                     <div class="card-body">
-                        <?php while ($history = $history_result->fetch_assoc()): ?>
-                            <div class="history-item">
-                                <div class="d-flex justify-content-between">
-                                    <div>
-                                        <strong><?php echo htmlspecialchars($history['FULLNAME']); ?></strong>
-                                        <?php if ($history['POINTS_EARNED'] > 0): ?>
-                                            <span class="text-success">+<?php echo $history['POINTS_EARNED']; ?> points</span>
-                                        <?php else: ?>
-                                            <span class="text-danger"><?php echo $history['POINTS_EARNED']; ?> points</span>
-                                        <?php endif; ?>
-                                    </div>
-                                    <small class="text-muted">
-                                        <?php echo date('M d, Y H:i', strtotime($history['CONVERSION_DATE'])); ?>
-                                    </small>
-                                </div>
-                            </div>
-                        <?php endwhile; ?>
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Student</th>
+                                    <th>Points Earned</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php while ($history = $history_result->fetch_assoc()): ?>
+                                    <tr>
+                                        <td><?php echo date('M d, Y H:i', strtotime($history['CONVERSION_DATE'])); ?></td>
+                                        <td><?php echo htmlspecialchars($history['FULLNAME']); ?></td>
+                                        <td>
+                                            <?php if ($history['POINTS_EARNED'] > 0): ?>
+                                                <span class="text-success">+<?php echo $history['POINTS_EARNED']; ?></span>
+                                            <?php else: ?>
+                                                <span class="text-danger"><?php echo $history['POINTS_EARNED']; ?></span>
+                                            <?php endif; ?>
+                                        </td>
+                                        <td>
+                                            <?php
+                                            if ($history['CONVERTED_TO_SESSION']) {
+                                                echo '<span class="badge bg-info">Converted to Session</span>';
+                                            } else {
+                                                echo '<span class="badge bg-success">Sit-in/Manual</span>';
+                                            }
+                                            ?>
+                                        </td>
+                                    </tr>
+                                <?php endwhile; ?>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>

@@ -151,6 +151,7 @@ if (!$result) {
                 <li class="nav-item"><a class="nav-link active" href="current_sitin.php">Sit-In</a></li>
                 <li class="nav-item"><a class="nav-link" href="sitinrecords.php">Sit-in Records</a></li>
                 <li class="nav-item"><a class="nav-link" href="manage_reservations.php">Reservations</a></li>
+                <li class="nav-item"><a class="nav-link " href="admin/lab_schedules.php">Lab Schedules</a></li>
                 <li class="nav-item"><a class="nav-link" href="admin/feedback.php">Feedback</a></li>
                 <li class="nav-item"><a class="nav-link" href="labresources.php">Lab Resources</a></li>
                 <li class="nav-item"><a class="nav-link" href="reports.php">Reports</a></li>

@@ -21,15 +21,26 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $status = $conn->real_escape_string($_POST['status']);
             $notes = $conn->real_escape_string($_POST['notes']);
 
-            $sql = "INSERT INTO labschedules (ROOM_NUMBER, DAY_GROUP, TIME_SLOT, STATUS, NOTES) 
-                    VALUES (?, ?, ?, ?, ?)";
-            $stmt = $conn->prepare($sql);
-            $stmt->bind_param("sssss", $room_number, $day_group, $time_slot, $status, $notes);
+            // Check for duplicate schedule
+            $check_sql = "SELECT * FROM labschedules WHERE ROOM_NUMBER = ? AND DAY_GROUP = ? AND TIME_SLOT = ?";
+            $check_stmt = $conn->prepare($check_sql);
+            $check_stmt->bind_param("sss", $room_number, $day_group, $time_slot);
+            $check_stmt->execute();
+            $check_result = $check_stmt->get_result();
 
-            if ($stmt->execute()) {
-                $message = "Schedule added successfully!";
+            if ($check_result->num_rows > 0) {
+                $error = "A schedule for this room, day, and time slot already exists!";
             } else {
-                $error = "Error adding schedule: " . $conn->error;
+                $sql = "INSERT INTO labschedules (ROOM_NUMBER, DAY_GROUP, TIME_SLOT, STATUS, NOTES) 
+                        VALUES (?, ?, ?, ?, ?)";
+                $stmt = $conn->prepare($sql);
+                $stmt->bind_param("sssss", $room_number, $day_group, $time_slot, $status, $notes);
+
+                if ($stmt->execute()) {
+                    $message = "Schedule added successfully!";
+                } else {
+                    $error = "Error adding schedule: " . $conn->error;
+                }
             }
         } elseif ($_POST['action'] == 'update') {
             $id = (int)$_POST['schedule_id'];
@@ -173,8 +184,19 @@ $result = $conn->query($sql);
                         <div class="col-md-3">
                             <div class="mb-3">
                                 <label for="time_slot" class="form-label">Time Slot</label>
-                                <input type="text" class="form-control" id="time_slot" name="time_slot" 
-                                       placeholder="e.g., 8:00-9:00" required>
+                                <select class="form-select" id="time_slot" name="time_slot" required>
+                                    <option value="">Select Time Slot</option>
+                                    <option value="8:00AM-9:00AM">8:00AM - 9:00AM</option>
+                                    <option value="9:00AM-10:00AM">9:00AM - 10:00AM</option>
+                                    <option value="10:00AM-11:00AM">10:00AM - 11:00AM</option>
+                                    <option value="11:00AM-12:00PM">11:00AM - 12:00PM</option>
+                                    <option value="12:00PM-1:00PM">12:00PM - 1:00PM</option>
+                                    <option value="1:00PM-2:00PM">1:00PM - 2:00PM</option>
+                                    <option value="2:00PM-3:00PM">2:00PM - 3:00PM</option>
+                                    <option value="3:00PM-4:00PM">3:00PM - 4:00PM</option>
+                                    <option value="4:00PM-5:00PM">4:00PM - 5:00PM</option>
+                                    <option value="5:00PM-6:00PM">5:00PM - 6:00PM</option>
+                                </select>
                             </div>
                         </div>
                         <div class="col-md-3">
@@ -182,7 +204,7 @@ $result = $conn->query($sql);
                                 <label for="status" class="form-label">Status</label>
                                 <select class="form-select" id="status" name="status" required>
                                     <option value="Available">Available</option>
-                                    <option value="Reserved">Reserved</option>
+                                    <option value="Occupied">Occupied</option>
                                     <option value="Maintenance">Maintenance</option>
                                 </select>
                             </div>

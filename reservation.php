@@ -67,7 +67,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $check_sql = "SELECT * FROM reservations 
                          WHERE LABORATORY = ? AND PC_NUMBER = ? 
                          AND DATE = ? AND TIME_SLOT = ? 
-                         AND STATUS != 'cancelled'";
+                         AND STATUS IN ('pending', 'confirmed', 'approved')";
             $check_stmt = $conn->prepare($check_sql);
             $check_stmt->bind_param("ssss", $laboratory, $pc_number, $date, $time_slot);
             $check_stmt->execute();
@@ -82,6 +82,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $insert_stmt = $conn->prepare($insert_sql);
                 if ($insert_stmt->bind_param("ssssss", $_SESSION['IDNO'], $laboratory, $pc_number, $date, $time_slot, $purpose)) {
                     if ($insert_stmt->execute()) {
+                        // Update PC status to unavailable
+                        $update_pc_sql = "UPDATE pc_status SET STATUS = 'unavailable' WHERE ROOM_NUMBER = ? AND PC_NUMBER = ?";
+                        $update_pc_stmt = $conn->prepare($update_pc_sql);
+                        $update_pc_stmt->bind_param("ss", $laboratory, $pc_number);
+                        $update_pc_stmt->execute();
+                        
                         $message = "Reservation submitted successfully!";
                         // Notify admin of new reservation
                         require_once 'includes/notifications.php';
@@ -107,7 +113,6 @@ LEFT JOIN sitin_records s
   AND s.TIME_OUT IS NOT NULL
 WHERE r.IDNO = ?
   AND r.DATE >= CURDATE()
-  AND r.STATUS != 'cancelled'
   AND s.ID IS NULL
 ORDER BY r.DATE, r.TIME_SLOT";
 $reservations_stmt = $conn->prepare($reservations_sql);
@@ -300,12 +305,12 @@ $reservations = $reservations_stmt->get_result();
                                 <label for="pc_number" class="form-label">PC Number</label>
                                 <div class="pc-grid">
                                     <?php
-                                    // Generate PC buttons from 1 to 50
+                                    $dateSelected = isset($_POST['date']) && !empty($_POST['date']);
+                                    $timeSlotSelected = isset($_POST['time_slot']) && !empty($_POST['time_slot']);
                                     for ($i = 1; $i <= 50; $i++) {
                                         $status = 'available'; // Default status
                                         $disabled = '';
                                         $statusClass = 'btn-outline-primary';
-                                        
                                         // Check if PC exists in pc_status table
                                         if (isset($pcStatus)) {
                                             foreach ($pcStatus as $pc) {
@@ -322,19 +327,19 @@ $reservations = $reservations_stmt->get_result();
                                                 }
                                             }
                                         }
-                                        
-                                        // Check if PC is already reserved for the selected time slot
-                                        if (isset($_POST['date']) && isset($_POST['time_slot'])) {
+                                        // Only check reservations if both date and time slot are selected
+                                        if ($dateSelected && $timeSlotSelected) {
                                             $check_sql = "SELECT * FROM reservations 
                                                         WHERE LABORATORY = ? AND PC_NUMBER = ? 
                                                         AND DATE = ? AND TIME_SLOT = ? 
-                                                        AND STATUS != 'cancelled'";
+                                                        AND STATUS IN ('pending', 'confirmed', 'approved')";
                                             $check_stmt = $conn->prepare($check_sql);
                                             $check_stmt->bind_param("ssss", $_POST['laboratory'], $i, $_POST['date'], $_POST['time_slot']);
                                             $check_stmt->execute();
                                             if ($check_stmt->get_result()->num_rows > 0) {
                                                 $disabled = 'disabled';
                                                 $statusClass = 'btn-secondary';
+                                                $status = 'reserved';
                                             }
                                         }
                                     ?>
@@ -385,40 +390,52 @@ $reservations = $reservations_stmt->get_result();
                         </div>
                     </div>
                 </div>
+                <!-- My Active Reservations moved here -->
+                <div class="card mt-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">My Active Reservations</h5>
+                    </div>
+                    <div class="card-body">
+                        <?php if ($reservations->num_rows > 0): ?>
+                            <div class="d-flex flex-column gap-3">
+                                <?php while ($row = $reservations->fetch_assoc()): ?>
+                                    <div class="reservation-card p-3 border rounded shadow-sm">
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <div>
+                                                <strong>Lab:</strong> <?php echo htmlspecialchars($row['LABORATORY']); ?>
+                                                <span class="mx-2">|</span>
+                                                <strong>PC #:</strong> <?php echo htmlspecialchars($row['PC_NUMBER']); ?>
+                                            </div>
+                                            <span class="status-badge status-<?php echo strtolower($row['STATUS']); ?>">
+                                                <?php echo ucfirst($row['STATUS']); ?>
+                                            </span>
+                                        </div>
+                                        <div><strong>Date:</strong> <?php echo htmlspecialchars($row['DATE']); ?></div>
+                                        <div><strong>Time Slot:</strong> <?php echo htmlspecialchars($row['TIME_SLOT']); ?></div>
+                                        <div><strong>Purpose:</strong> <?php echo htmlspecialchars($row['PURPOSE']); ?></div>
+                                    </div>
+                                <?php endwhile; ?>
+                            </div>
+                        <?php else: ?>
+                            <p class="text-muted">You have no active reservations.</p>
+                        <?php endif; ?>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        document.getElementById('laboratory').addEventListener('change', function() {
-            const lab = this.value;
-            const date = document.getElementById('date').value;
-            if (lab && date) {
-                fetchSchedules(lab, date);
-            }
-        });
-
-        document.getElementById('date').addEventListener('change', function() {
-            const lab = document.getElementById('laboratory').value;
-            const date = this.value;
-            if (lab && date) {
-                fetchSchedules(lab, date);
-            }
-        });
-
         function fetchSchedules(lab, date) {
             const dayOfWeek = new Date(date).toLocaleDateString('en-US', { weekday: 'long' });
-            
             fetch('get_schedules.php?lab=' + lab + '&day=' + dayOfWeek)
                 .then(response => response.json())
                 .then(data => {
                     const scheduleList = document.getElementById('scheduleList');
                     const timeSlotSelect = document.getElementById('time_slot');
-                    
                     // Clear existing options
                     timeSlotSelect.innerHTML = '<option value="">Select Time Slot</option>';
-                    
                     if (data.length > 0) {
                         let html = '<div class="table-responsive"><table class="table table-bordered">';
                         html += '<thead><tr><th>Time Slot</th><th>Status</th><th>Notes</th></tr></thead><tbody>';
@@ -448,22 +465,90 @@ $reservations = $reservations_stmt->get_result();
                     document.getElementById('scheduleList').innerHTML = '<p class="text-danger">Error loading schedules.</p>';
                 });
         }
-
-        document.querySelectorAll('.pc-item').forEach(button => {
-            button.addEventListener('click', function() {
-                // Remove selected class from all buttons
+        document.getElementById('laboratory').addEventListener('change', function() {
+            const lab = this.value;
+            const date = document.getElementById('date').value;
+            if (lab && date) {
+                fetchSchedules(lab, date);
+            }
+        });
+        document.getElementById('date').addEventListener('change', function() {
+            const lab = document.getElementById('laboratory').value;
+            const date = this.value;
+            if (lab && date) {
+                fetchSchedules(lab, date);
+            }
+        });
+        function updatePCGrid() {
+            const lab = document.getElementById('laboratory').value;
+            const date = document.getElementById('date').value;
+            const timeSlot = document.getElementById('time_slot').value;
+            if (!lab || !date || !timeSlot) {
+                // Enable all PCs (except those under maintenance/in-use)
                 document.querySelectorAll('.pc-item').forEach(btn => {
-                    btn.classList.remove('btn-primary');
-                    btn.classList.add('btn-outline-primary');
+                    if (!btn.classList.contains('btn-danger') && !btn.classList.contains('btn-warning')) {
+                        btn.disabled = false;
+                        btn.classList.remove('btn-secondary');
+                        btn.classList.add('btn-outline-primary');
+                        btn.querySelector('small').textContent = 'Available';
+                    }
                 });
-                
-                // Add selected class to clicked button
-                this.classList.remove('btn-outline-primary');
-                this.classList.add('btn-primary');
-                
-                // Update hidden input
-                document.getElementById('selected_pc').value = this.dataset.pc;
+                return;
+            }
+            fetch(`get_reserved_pcs.php?lab=${lab}&date=${date}&time_slot=${encodeURIComponent(timeSlot)}`)
+                .then(response => response.json())
+                .then(data => {
+                    document.querySelectorAll('.pc-item').forEach(btn => {
+                        const pcNum = parseInt(btn.getAttribute('data-pc'));
+                        if (data.reserved_pcs.includes(pcNum)) {
+                            btn.disabled = true;
+                            btn.classList.remove('btn-outline-primary');
+                            btn.classList.add('btn-secondary');
+                            btn.querySelector('small').textContent = 'Reserved';
+                        } else if (!btn.classList.contains('btn-danger') && !btn.classList.contains('btn-warning')) {
+                            btn.disabled = false;
+                            btn.classList.remove('btn-secondary');
+                            btn.classList.add('btn-outline-primary');
+                            btn.querySelector('small').textContent = 'Available';
+                        }
+                    });
+                });
+        }
+        function enableAvailablePCs() {
+            document.querySelectorAll('.pc-item').forEach(btn => {
+                // Only enable if not reserved, not maintenance, not in-use
+                if (
+                    !btn.classList.contains('btn-secondary') &&
+                    !btn.classList.contains('btn-danger') &&
+                    !btn.classList.contains('btn-warning')
+                ) {
+                    btn.disabled = false;
+                }
             });
+        }
+        function attachPCClickHandlers() {
+            document.querySelectorAll('.pc-item').forEach(button => {
+                button.addEventListener('click', function() {
+                    // Remove selected class from all buttons
+                    document.querySelectorAll('.pc-item').forEach(btn => {
+                        btn.classList.remove('btn-primary');
+                        btn.classList.add('btn-outline-primary');
+                    });
+                    // Add selected class to clicked button
+                    this.classList.remove('btn-outline-primary');
+                    this.classList.add('btn-primary');
+                    // Update hidden input
+                    document.getElementById('selected_pc').value = this.dataset.pc;
+                });
+            });
+        }
+        // Call this after the PC grid is updated
+        document.getElementById('time_slot').addEventListener('change', function() {
+            updatePCGrid();
+            attachPCClickHandlers();
+        });
+        window.addEventListener('DOMContentLoaded', function() {
+            attachPCClickHandlers();
         });
     </script>
 </body>

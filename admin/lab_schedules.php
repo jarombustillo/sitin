@@ -205,7 +205,7 @@ $result = $conn->query($sql);
                                 <select class="form-select" id="status" name="status" required>
                                     <option value="Available">Available</option>
                                     <option value="Occupied">Occupied</option>
-                                    <option value="Maintenance">Maintenance</option>
+
                                 </select>
                             </div>
                         </div>
@@ -304,8 +304,7 @@ $result = $conn->query($sql);
                                                             <label for="status<?php echo $row['ID']; ?>" class="form-label">Status</label>
                                                             <select class="form-select" id="status<?php echo $row['ID']; ?>" name="status" required>
                                                                 <option value="Available" <?php echo $row['STATUS'] == 'Available' ? 'selected' : ''; ?>>Available</option>
-                                                                <option value="Reserved" <?php echo $row['STATUS'] == 'Reserved' ? 'selected' : ''; ?>>Reserved</option>
-                                                                <option value="Maintenance" <?php echo $row['STATUS'] == 'Maintenance' ? 'selected' : ''; ?>>Maintenance</option>
+                                                                <option value="Reserved" <?php echo $row['STATUS'] == 'Reserved' ? 'selected' : ''; ?>>Occupied</option>
                                                             </select>
                                                         </div>
                                                         

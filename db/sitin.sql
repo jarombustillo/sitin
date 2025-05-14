@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 08, 2025 at 07:34 AM
+-- Generation Time: May 14, 2025 at 05:13 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -81,7 +81,8 @@ CREATE TABLE `feedback` (
 --
 
 INSERT INTO `feedback` (`ID`, `SITIN_RECORD_ID`, `STUDENT_ID`, `RATING`, `COMMENT`, `CREATED_AT`) VALUES
-(0, 1003, '1000', 5, 'meh', '2025-05-06 02:59:56');
+(1, 1003, '1000', 5, 'meh', '2025-05-06 02:59:56'),
+(2, 1017, '2000', 5, 'nicenice', '2025-05-08 06:23:18');
 
 -- --------------------------------------------------------
 
@@ -98,6 +99,60 @@ CREATE TABLE `labschedules` (
   `NOTES` text DEFAULT NULL,
   `LAST_UPDATED` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `labschedules`
+--
+
+INSERT INTO `labschedules` (`ID`, `ROOM_NUMBER`, `DAY_GROUP`, `TIME_SLOT`, `STATUS`, `NOTES`, `LAST_UPDATED`) VALUES
+(1, '524', 'Monday', '8:00AM-9:00AM', 'Available', '', '2025-05-10 03:25:21'),
+(2, '524', 'Monday', '9:00AM-10:00AM', 'Available', '', '2025-05-10 03:25:23'),
+(3, '524', 'Monday', '10:00AM-11:00AM', 'Available', '', '2025-05-10 03:25:29'),
+(5, '524', 'Monday', '11:00AM-12:00PM', 'Available', '', '2025-05-10 03:26:19'),
+(6, '524', 'Monday', '12:00PM-1:00PM', 'Occupied', '', '2025-05-10 03:27:18'),
+(7, '524', 'Monday', '1:00PM-2:00PM', 'Occupied', '', '2025-05-10 03:27:22'),
+(8, '526', 'Monday', '8:00AM-9:00AM', 'Available', '', '2025-05-10 03:28:47'),
+(12, '524', 'Monday', '2:00PM-3:00PM', 'Occupied', '', '2025-05-10 03:32:56'),
+(13, '524', 'Monday', '3:00PM-4:00PM', 'Available', '', '2025-05-10 03:45:30'),
+(14, '524', 'Monday', '5:00PM-6:00PM', 'Occupied', '', '2025-05-10 03:45:40'),
+(15, '526', 'Tuesday', '8:00AM-9:00AM', 'Available', '', '2025-05-10 03:45:49'),
+(16, '526', 'Tuesday', '10:00AM-11:00AM', 'Occupied', '', '2025-05-12 09:59:41'),
+(17, '526', 'Tuesday', '9:00AM-10:00AM', 'Available', '', '2025-05-12 10:00:14'),
+(18, '526', 'Tuesday', '11:00AM-12:00PM', 'Available', '', '2025-05-12 10:00:22'),
+(19, '526', 'Tuesday', '12:00PM-1:00PM', 'Available', '', '2025-05-12 10:00:28'),
+(20, '526', 'Tuesday', '1:00PM-2:00PM', 'Available', '', '2025-05-12 10:01:03'),
+(21, '526', 'Tuesday', '2:00PM-3:00PM', 'Occupied', '', '2025-05-12 10:01:10'),
+(22, '526', 'Tuesday', '3:00PM-4:00PM', 'Available', '', '2025-05-12 10:01:21'),
+(23, '526', 'Tuesday', '4:00PM-5:00PM', 'Occupied', '', '2025-05-12 10:01:34'),
+(24, '526', 'Tuesday', '5:00PM-6:00PM', 'Available', '', '2025-05-12 10:01:39'),
+(25, '528', 'Wednesday', '8:00AM-9:00AM', 'Available', '', '2025-05-12 10:02:30'),
+(26, '528', 'Wednesday', '9:00AM-10:00AM', 'Occupied', '', '2025-05-12 10:02:44'),
+(27, '528', 'Wednesday', '10:00AM-11:00AM', 'Available', '', '2025-05-12 10:02:50'),
+(28, '528', 'Wednesday', '11:00AM-12:00PM', 'Available', '', '2025-05-12 10:02:54'),
+(29, '528', 'Wednesday', '12:00PM-1:00PM', 'Occupied', '', '2025-05-12 10:03:07'),
+(30, '528', 'Wednesday', '1:00PM-2:00PM', 'Occupied', '', '2025-05-12 10:17:44'),
+(31, '528', 'Wednesday', '2:00PM-3:00PM', 'Available', '', '2025-05-12 10:17:49'),
+(32, '528', 'Wednesday', '3:00PM-4:00PM', 'Available', '', '2025-05-12 10:17:56'),
+(33, '528', 'Wednesday', '4:00PM-5:00PM', 'Available', '', '2025-05-12 10:18:02'),
+(34, '528', 'Wednesday', '5:00PM-6:00PM', 'Available', '', '2025-05-12 10:18:09'),
+(35, '530', 'Thursday', '8:00AM-9:00AM', 'Available', '', '2025-05-12 10:18:25'),
+(36, '530', 'Thursday', '9:00AM-10:00AM', 'Available', '', '2025-05-12 10:18:37'),
+(37, '530', 'Thursday', '10:00AM-11:00AM', 'Occupied', '', '2025-05-12 10:18:45'),
+(38, '530', 'Thursday', '11:00AM-12:00PM', 'Occupied', '', '2025-05-12 10:18:55'),
+(39, '530', 'Thursday', '12:00PM-1:00PM', 'Occupied', '', '2025-05-12 10:19:01'),
+(40, '530', 'Thursday', '2:00PM-3:00PM', 'Available', '', '2025-05-12 10:22:18'),
+(41, '530', 'Monday', '2:00PM-3:00PM', 'Available', '', '2025-05-12 10:22:29'),
+(42, '530', 'Thursday', '3:00PM-4:00PM', 'Available', '', '2025-05-12 10:22:35'),
+(43, '530', 'Monday', '4:00PM-5:00PM', 'Available', '', '2025-05-12 10:22:39'),
+(44, '530', 'Monday', '5:00PM-6:00PM', 'Available', '', '2025-05-12 10:22:44'),
+(45, '542', 'Friday', '10:00AM-11:00AM', 'Available', '', '2025-05-12 10:22:52'),
+(47, '542', 'Friday', '8:00AM-9:00AM', 'Occupied', '', '2025-05-12 10:23:30'),
+(49, '542', 'Friday', '11:00AM-12:00PM', 'Available', '', '2025-05-12 10:24:36'),
+(52, '542', 'Friday', '9:00AM-10:00AM', 'Occupied', '', '2025-05-12 10:28:56'),
+(53, '542', 'Friday', '1:00PM-2:00PM', 'Available', '', '2025-05-12 10:29:03'),
+(54, '542', 'Friday', '2:00PM-3:00PM', 'Occupied', '', '2025-05-12 10:29:09'),
+(55, '542', 'Monday', '3:00PM-4:00PM', 'Occupied', '', '2025-05-12 10:29:17'),
+(56, '544', 'Saturday', '8:00AM-9:00AM', 'Available', '', '2025-05-12 10:29:24');
 
 -- --------------------------------------------------------
 
@@ -127,7 +182,8 @@ INSERT INTO `lab_resources` (`ID`, `TITLE`, `DESCRIPTION`, `CATEGORY`, `RESOURCE
 (2, 'Xampp', 'xampp installer', 'Database', 'Other', 'https://www.apachefriends.org/', '', '2025-05-07 21:35:54', '', ''),
 (3, 'Visual Studio Code', 'visual studio code', 'Programming', 'Document', 'https://code.visualstudio.com/', '', '2025-05-07 21:37:03', '', ''),
 (4, 'About You ', 'About you - 1975', 'Other', 'Other', '', '681b6219c6d6b_aboutyou.jpg', '2025-05-07 21:37:29', 'aboutyou.jpg', 'jpg'),
-(5, 'Canvas', 'UC LMS', 'Programming', 'Document', 'https://universityofcebu.instructure.com/login/canvas', '', '2025-05-07 21:37:59', '', '');
+(5, 'Canvas', 'UC LMS', 'Programming', 'Document', 'https://universityofcebu.instructure.com/login/canvas', '', '2025-05-07 21:37:59', '', ''),
+(7, 'Multo', 'Multo - Cup of Joe', 'Other', 'Video', 'https://www.youtube.com/watch?v=Rht8rS4cR1s', '681c4cda4b618_multo.jpg', '2025-05-08 14:19:06', 'multo.jpg', 'jpg');
 
 -- --------------------------------------------------------
 
@@ -150,7 +206,24 @@ CREATE TABLE `notifications` (
 --
 
 INSERT INTO `notifications` (`ID`, `USER_ID`, `MESSAGE`, `TYPE`, `DETAILS`, `IS_READ`, `CREATED_AT`) VALUES
-(1, 0, 'New reservation submitted by student ID 2000 for Lab Lab 524, PC 47, 2025-05-08 (16:00-17:00).', 'admin', '', 0, '2025-05-08 05:24:39');
+(1, 0, 'New reservation submitted by student ID 2000 for Lab Lab 524, PC 47, 2025-05-08 (16:00-17:00).', 'admin', '', 1, '2025-05-08 05:24:39'),
+(2, 0, 'New reservation submitted by student ID 1000 for Lab Lab 524, PC 37, 2025-05-08 (16:00-17:00).', 'admin', '', 1, '2025-05-08 05:57:34'),
+(3, 0, 'New reservation submitted by student ID 1000 for Lab Lab 526, PC 49, 2025-05-08 (16:00-17:00).', 'admin', '', 1, '2025-05-08 06:01:00'),
+(4, 0, 'New reservation submitted by student ID 1000 for Lab Lab 544, PC 46, 2025-05-10 (10:00-11:00).', 'admin', '', 1, '2025-05-08 06:11:06'),
+(5, 1000, 'Your reservation for Lab Lab 544, PC 46 on May 10, 2025 (10:00-11:00) has been confirmed', 'user', '', 1, '2025-05-08 06:11:24'),
+(6, 0, 'Reservation for Jarom Bustillo (Lab Lab 544, PC 46) has been confirmed', 'admin', '', 1, '2025-05-08 06:11:24'),
+(7, 0, 'New reservation submitted by student ID 1000 for Lab 524, PC 1, 2025-05-12 (8:00AM-9:00AM).', 'admin', '', 1, '2025-05-12 09:16:12'),
+(8, 1000, 'Your reservation for Lab 524, PC 1 on May 12, 2025 (8:00AM-9:00AM) has been cancelled', 'user', '', 1, '2025-05-12 09:19:53'),
+(9, 0, 'Reservation for Jarom Bustillo (Lab 524, PC 1) has been cancelled', 'admin', '', 1, '2025-05-12 09:19:53'),
+(10, 0, 'New reservation submitted by student ID 2000 for Lab 524, PC 4, 2025-05-12 (8:00AM-9:00AM).', 'admin', '', 1, '2025-05-12 10:31:06'),
+(11, 2000, 'Your reservation for Lab 524, PC 4 on May 12, 2025 (8:00AM-9:00AM) has been confirmed', 'user', '', 1, '2025-05-12 10:31:27'),
+(12, 0, 'Reservation for John Doe (Lab 524, PC 4) has been confirmed', 'admin', '', 1, '2025-05-12 10:31:27'),
+(13, 0, 'New reservation submitted by student ID 2000 for Lab 526, PC 4, 2025-05-12 (8:00AM-9:00AM).', 'admin', '', 1, '2025-05-12 10:32:23'),
+(14, 2000, 'Your reservation for Lab 526, PC 4 on May 12, 2025 (8:00AM-9:00AM) has been cancelled', 'user', '', 1, '2025-05-12 10:32:52'),
+(15, 0, 'Reservation for John Doe (Lab 526, PC 4) has been cancelled', 'admin', '', 1, '2025-05-12 10:32:52'),
+(16, 0, 'New reservation submitted by student ID 1000 for Lab 524, PC 2, 2025-05-19 (8:00AM-9:00AM).', 'admin', '', 1, '2025-05-14 13:54:58'),
+(17, 1000, 'Your reservation for Lab 524, PC 2 on May 19, 2025 (8:00AM-9:00AM) has been confirmed', 'user', '', 1, '2025-05-14 14:00:33'),
+(18, 0, 'Reservation for Jarom Bustillo (Lab 524, PC 2) has been confirmed', 'admin', '', 1, '2025-05-14 14:00:33');
 
 -- --------------------------------------------------------
 
@@ -189,7 +262,10 @@ INSERT INTO `points_history` (`ID`, `IDNO`, `FULLNAME`, `POINTS_EARNED`, `CONVER
 (1, '1000', 'Jarom Bustillo', 10, 0, '2025-05-08 09:21:10'),
 (2, '2000', 'John Doe', 10, 0, '2025-05-08 09:21:21'),
 (3, '3000', 'Marphine Faith Mangubat', 10, 0, '2025-05-08 09:21:32'),
-(4, '1000', 'Jarom Bustillo', 10, 0, '2025-05-08 09:22:56');
+(4, '1000', 'Jarom Bustillo', 10, 0, '2025-05-08 09:22:56'),
+(5, '2000', 'John Doe', -2, 1, '2025-05-14 22:37:13'),
+(6, '3000', 'Marphine Faith Mangubat', -2, 1, '2025-05-14 22:37:16'),
+(7, '3000', 'Marphine Faith Mangubat', -2, 1, '2025-05-14 22:41:46');
 
 -- --------------------------------------------------------
 
@@ -215,13 +291,12 @@ CREATE TABLE `reservations` (
 --
 
 INSERT INTO `reservations` (`ID`, `IDNO`, `LABORATORY`, `PC_NUMBER`, `DATE`, `TIME_SLOT`, `PURPOSE`, `STATUS`, `CREATED_AT`, `UPDATED_AT`) VALUES
-(1, 1000, 'Lab 1', 2, '2025-05-07', '09:00-10:00', 'submitting a programming assignment', 'confirmed', '2025-05-06 16:13:57', '2025-05-06 16:28:51'),
 (2, 3000, 'Lab 524', 0, '2025-05-07', '08:00-09:00', 'docs purposes', 'confirmed', '2025-05-06 16:34:48', '2025-05-06 16:35:17'),
-(3, 1000, 'Lab 524', 3, '2025-05-08', '08:00-09:00', 'sss', 'cancelled', '2025-05-08 01:16:42', '2025-05-08 01:20:31'),
-(4, 1000, 'Lab 526', 1, '2025-05-09', '08:00-09:00', 'zzzz', 'confirmed', '2025-05-08 01:21:02', '2025-05-08 01:21:47'),
 (5, 3000, 'Lab 524', 2, '2025-05-08', '14:00-15:00', 'kkk', 'cancelled', '2025-05-08 13:13:28', '2025-05-08 13:21:14'),
 (6, 2000, 'Lab 526', 42, '2025-05-08', '16:00-17:00', 'huhu', 'cancelled', '2025-05-08 13:17:10', '2025-05-08 13:21:15'),
-(7, 2000, 'Lab 524', 47, '2025-05-08', '16:00-17:00', 'wewe', 'pending', '2025-05-08 13:24:39', '2025-05-08 13:24:39');
+(7, 2000, 'Lab 524', 47, '2025-05-08', '16:00-17:00', 'wewe', 'cancelled', '2025-05-08 13:24:39', '2025-05-08 13:45:54'),
+(12, 2000, '524', 4, '2025-05-12', '8:00AM-9:00AM', 'hehe', 'confirmed', '2025-05-12 18:31:06', '2025-05-12 18:31:27'),
+(13, 2000, '526', 4, '2025-05-12', '8:00AM-9:00AM', 'wewe', 'cancelled', '2025-05-12 18:32:23', '2025-05-12 18:32:52');
 
 -- --------------------------------------------------------
 
@@ -241,10 +316,8 @@ CREATE TABLE `reward_points` (
 --
 
 INSERT INTO `reward_points` (`ID`, `STUDENT_ID`, `POINTS`, `LAST_REWARD_DATE`) VALUES
-(13, '1000', 10, '2025-05-08'),
-(14, '2000', 10, '2025-05-08'),
-(15, '3000', 10, '2025-05-08'),
-(16, '1000', 10, '2025-05-08');
+(14, '2000', 2, '2025-05-08'),
+(15, '3000', 0, '2025-05-08');
 
 -- --------------------------------------------------------
 
@@ -312,11 +385,12 @@ CREATE TABLE `user` (
 --
 
 INSERT INTO `user` (`IDNO`, `Lastname`, `Firstname`, `Midname`, `course`, `year_level`, `username`, `password`, `profilepic`, `session_count`) VALUES
-(1000, 'Bustillo', 'Jarom', '', 'BSIT', 3, 'jarom', '$2y$10$oBYe0lAvh75kYIAG1e.2GOX.L6oJRK3xQSM0zK064cknPwCU3q4lW', 'default.png', 19),
-(2000, 'Doe', 'John', '', 'BSIT', 2, 'john.doe', '$2y$10$WsMO/pJPL/7WQWzCZBualuF6ER6.66geH41yBqXPHYHCxHsVk.UPi', 'default.png', 27),
-(3000, 'Mangubat', 'Marphine Faith', 'Jagdon', 'BSCS', 1, 'marphine', '$2y$10$gKSONNZcgY2OXCGLElMOjOGxqDiUfbI.7eGPDNCHNkLEg4EhocTs2', 'user_1746637336.jpg', 25),
+(1000, 'Bustillo', 'Jarom', '', 'BSIT', 3, 'jarom', '$2y$10$LJkkhOukeqT6fDcqhhaWMe20AWkhJ67qOB8Vqs3zkCuV8ljqZ61MS', 'default.png', 30),
+(2000, 'Doe', 'John', '', 'BSIT', 2, 'john.doe', '$2y$10$WsMO/pJPL/7WQWzCZBualuF6ER6.66geH41yBqXPHYHCxHsVk.UPi', 'default.png', 30),
+(3000, 'Mangubat', 'Marphine Faith', 'Jagdon', 'BSCS', 1, 'marphine', '$2y$10$gKSONNZcgY2OXCGLElMOjOGxqDiUfbI.7eGPDNCHNkLEg4EhocTs2', 'user_1746637336.jpg', 29),
 (4000, 'Doe', 'Jane', '', 'BSCPE', 4, 'jane.doe', '$2y$10$23gW3R/EiRe58JTG2rZmT.X9XZUPCd7AHs4xpZsVkIx33a/bftHO2', 'default.png', 30),
-(5000, 'Barcenas', 'Ezekiel', '', 'BSCS', 1, 'ezekiel', '$2y$10$X0ZGJ4intn2lwB85y8SOl.FJsCt9Pc0/0qT4P1pzpXELvVsjsYP02', 'default.png', 30);
+(5000, 'Barcenas', 'Ezekiel', '', 'BSCS', 1, 'ezekiel', '$2y$10$X0ZGJ4intn2lwB85y8SOl.FJsCt9Pc0/0qT4P1pzpXELvVsjsYP02', 'default.png', 30),
+(6000, 'Bustillo', 'Kyle', '', 'BSCPE', 3, 'kyle', '$2y$10$bmMINAixKcTcVwkQ16UUFuHt16GtgwDS1TUfSreEi8mfWSwHO4hUC', 'default.png', 30);
 
 --
 -- Indexes for dumped tables
@@ -412,22 +486,28 @@ ALTER TABLE `announcement`
   MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
+-- AUTO_INCREMENT for table `feedback`
+--
+ALTER TABLE `feedback`
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
 -- AUTO_INCREMENT for table `labschedules`
 --
 ALTER TABLE `labschedules`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=57;
 
 --
 -- AUTO_INCREMENT for table `lab_resources`
 --
 ALTER TABLE `lab_resources`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `notifications`
 --
 ALTER TABLE `notifications`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
 -- AUTO_INCREMENT for table `pc_status`
@@ -439,13 +519,13 @@ ALTER TABLE `pc_status`
 -- AUTO_INCREMENT for table `points_history`
 --
 ALTER TABLE `points_history`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `reservations`
 --
 ALTER TABLE `reservations`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT for table `reward_points`

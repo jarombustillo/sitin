@@ -71,6 +71,16 @@ if (empty($currentLab) && !empty($laboratories)) {
 // Get PC status for current laboratory
 $pcStatus = getPCStatus($conn, $currentLab);
 
+// Fetch all PC statuses for the user's reservations
+$pc_status_map = [];
+$pc_status_sql = "SELECT ROOM_NUMBER, PC_NUMBER, STATUS FROM pc_status";
+$pc_status_result = $conn->query($pc_status_sql);
+if ($pc_status_result) {
+    while ($row = $pc_status_result->fetch_assoc()) {
+        $pc_status_map[$row['ROOM_NUMBER'] . '-' . $row['PC_NUMBER']] = $row['STATUS'];
+    }
+}
+
 // Include the dashboard header which contains the navbar
 include 'dashboard.php';
 ?>

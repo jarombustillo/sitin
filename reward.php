@@ -38,7 +38,7 @@ if (isset($_POST['adjust_points'])) {
     // Record in points history
     $history_sql = "INSERT INTO points_history (IDNO, FULLNAME, POINTS_EARNED, CONVERSION_DATE) VALUES (?, ?, ?, NOW())";
     $history_stmt = $conn->prepare($history_sql);
-    $history_stmt->bind_param("ssi", $student_id, $fullname, $points);
+    $history_stmt->bind_param("ss", $student_id, $fullname);
     $history_stmt->execute();
     
     header("Location: reward.php?success=1");
@@ -71,6 +71,44 @@ if (isset($_POST['convert_to_session'])) {
     
     header("Location: reward.php?converted=1");
     exit();
+}
+
+// Handle reward action: convert 2 points to 1 session, max 30 sessions
+if (isset($_POST['reward_action'])) {
+    $student_id = mysqli_real_escape_string($conn, $_POST['student_id']);
+    $fullname = mysqli_real_escape_string($conn, $_POST['fullname']);
+    // Get current points and session count
+    $get_sql = "SELECT COALESCE(rp.POINTS,0) as points, u.session_count FROM user u LEFT JOIN reward_points rp ON u.IDNO = rp.STUDENT_ID WHERE u.IDNO = ?";
+    $get_stmt = $conn->prepare($get_sql);
+    $get_stmt->bind_param("s", $student_id);
+    $get_stmt->execute();
+    $get_result = $get_stmt->get_result();
+    $row = $get_result->fetch_assoc();
+    $points = (int)$row['points'];
+    $sessions = (int)$row['session_count'];
+    if ((int)$points >= 2 && (int)$sessions < 30) {
+        // Subtract 2 points, add 1 session (max 30)
+        $new_sessions = min($sessions + 1, 30);
+        $update_points_sql = "UPDATE reward_points SET POINTS = POINTS - 2 WHERE STUDENT_ID = ?";
+        $update_points_stmt = $conn->prepare($update_points_sql);
+        $update_points_stmt->bind_param("s", $student_id);
+        $update_points_stmt->execute();
+        $update_sessions_sql = "UPDATE user SET session_count = ? WHERE IDNO = ?";
+        $update_sessions_stmt = $conn->prepare($update_sessions_sql);
+        $update_sessions_stmt->bind_param("is", $new_sessions, $student_id);
+        $update_sessions_stmt->execute();
+        // Record in points history
+        $history_sql = "INSERT INTO points_history (IDNO, FULLNAME, POINTS_EARNED, CONVERSION_DATE, CONVERTED_TO_SESSION) VALUES (?, ?, -2, NOW(), 1)";
+        $history_stmt = $conn->prepare($history_sql);
+        $history_stmt->bind_param("ss", $student_id, $fullname);
+        $history_stmt->execute();
+        header("Location: reward.php?rewarded=1");
+        exit();
+    } else {
+        error_log("DEBUG: Not enough points or session limit reached for student $student_id: points=$points, sessions=$sessions");
+        header("Location: reward.php?reward_error=1");
+        exit();
+    }
 }
 
 // Get all students with their points
@@ -289,7 +327,7 @@ $history_result = $conn->query($history_sql);
                                 <?php
                                 $result->data_seek(0);
                                 $rank = 1;
-                                while ($row = $result->fetch_assoc()):
+                                while (($row = $result->fetch_assoc()) && $rank <= 5):
                                     $icon = '<i class="fa fa-user usericon"></i>';
                                     $name = htmlspecialchars($row['Lastname'] . ', ' . $row['Firstname']);
                                     if ($rank == 1) {
@@ -314,11 +352,62 @@ $history_result = $conn->query($history_sql);
             </div>
         </div>
 
+        <!-- All Students List with Reward Action -->
+        <div class="row justify-content-center mt-4">
+            <div class="col-lg-8 col-md-10">
+                <div class="leaderboard-card">
+                    <div class="leaderboard-header">
+                        <i class="fa fa-users"></i> All Students
+                    </div>
+                    <div class="table-responsive" style="max-height: 350px; overflow-y: auto;">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>ID No</th>
+                                    <th>Name</th>
+                                    <th>Course & Year</th>
+                                    <th>Points</th>
+                                    <th>Sessions</th>
+                                    <th>Reward</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php
+                                $result->data_seek(0);
+                                while ($row = $result->fetch_assoc()):
+                                    $fullname = htmlspecialchars($row['Firstname'] . ' ' . $row['Lastname']);
+                                    $course_year = htmlspecialchars($row['course'] . ' - Year ' . $row['year_level']);
+                                ?>
+                                <tr>
+                                    <td><?php echo htmlspecialchars($row['IDNO']); ?></td>
+                                    <td><?php echo $fullname; ?></td>
+                                    <td><?php echo $course_year; ?></td>
+                                    <td><?php echo $row['points']; ?></td>
+                                    <td><?php echo $row['session_count']; ?></td>
+                                    <td>
+                                        <form method="POST" style="display:inline;">
+                                            <input type="hidden" name="student_id" value="<?php echo htmlspecialchars($row['IDNO']); ?>">
+                                            <input type="hidden" name="fullname" value="<?php echo $fullname; ?>">
+                                            <button type="submit" name="reward_action" class="btn btn-sm btn-success"
+                                                <?php if ($row['points'] < 2 || $row['session_count'] >= 30) echo 'disabled'; ?>>
+                                                Reward
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                <?php endwhile; ?>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Points History Section -->
         <div class="row">
             <div class="col-md-12">
                 <div class="card leaderboard-card">
-                    <div class="card-header bg-primary text-white">
+                    <div class="leaderboard-header">
                         <h5 class="card-title mb-0">Points History</h5>
                     </div>
                     <div class="card-body">
@@ -430,6 +519,12 @@ $history_result = $conn->query($history_sql);
         </div>
     </div>
 
+    <?php if (isset($_GET['rewarded'])): ?>
+        <div class="alert alert-success text-center">Reward applied: 2 points converted to 1 session!</div>
+    <?php elseif (isset($_GET['reward_error'])): ?>
+        <div class="alert alert-danger text-center">Cannot reward: Not enough points or session limit reached.</div>
+    <?php endif; ?>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         // Adjust Points Modal
@@ -451,6 +546,13 @@ $history_result = $conn->query($history_sql);
                 document.getElementById('convert_available_points').value = this.dataset.availablePoints;
             });
         });
+
+        function setAdjustModal(id, name, points) {
+            document.getElementById('adjust_student_id').value = id;
+            document.getElementById('adjust_student_name').value = name;
+            document.getElementById('adjust_student_display').value = name;
+            document.getElementById('adjust_current_points').value = points;
+        }
     </script>
 </body>
 </html> 

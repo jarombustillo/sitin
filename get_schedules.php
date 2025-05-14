@@ -19,25 +19,15 @@ if (empty($lab) || empty($day)) {
     exit();
 }
 
-// Define time slots
-$timeSlots = [
-    '08:00-09:00',
-    '09:00-10:00',
-    '10:00-11:00',
-    '11:00-12:00',
-    '13:00-14:00',
-    '14:00-15:00',
-    '15:00-16:00',
-    '16:00-17:00'
-];
-
 // Check lab schedule
 $schedule_sql = "SELECT * FROM labschedules 
-                WHERE ROOM_NUMBER = ? 
-                AND DAY_GROUP = ? 
-                AND STATUS = 'Available'";
+                 WHERE (ROOM_NUMBER = ? OR ROOM_NUMBER = CONCAT('Lab ', ?))
+                 AND DAY_GROUP = ?";
 $schedule_stmt = $conn->prepare($schedule_sql);
-$schedule_stmt->bind_param("ss", $lab, $day);
+$schedule_stmt->bind_param("sss", $lab, $lab, $day);
+
+file_put_contents('debug.log', "LAB: $lab, DAY: $day\n", FILE_APPEND);
+
 $schedule_stmt->execute();
 $schedule_result = $schedule_stmt->get_result();
 
@@ -46,19 +36,13 @@ if ($schedule_result->num_rows > 0) {
     while ($row = $schedule_result->fetch_assoc()) {
         $availableSlots[] = [
             'TIME_SLOT' => $row['TIME_SLOT'],
-            'STATUS' => 'Available',
+            'STATUS' => $row['STATUS'],
             'NOTES' => $row['NOTES']
         ];
     }
 } else {
-    // If no specific schedule is set, all time slots are available
-    foreach ($timeSlots as $slot) {
-        $availableSlots[] = [
-            'TIME_SLOT' => $slot,
-            'STATUS' => 'Available',
-            'NOTES' => null
-        ];
-    }
+    // No schedules set by admin for this lab and day
+    $availableSlots = []; // Return empty array
 }
 
 // Return the available slots

@@ -62,6 +62,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['announcement'])) {
     $title = $conn->real_escape_string($_POST['announcement_title']);
     $date_posted = date("Y-m-d H:i:s");
     $conn->query("INSERT INTO announcement (TITLE, CONTENT, CREATED_AT) VALUES ('$title', '$content', '$date_posted')");
+    
+    // Notify all students of new announcement
+    require_once 'includes/notifications.php';
+    $students = $conn->query("SELECT IDNO FROM user");
+    $notif_message = "A new announcement has been posted: '$title'";
+    while ($student = $students->fetch_assoc()) {
+        createNotification($conn, $student['IDNO'], $notif_message, 'user');
+    }
+    
     header("Location: admin.php"); // Refresh page
     exit();
 }
@@ -358,7 +367,28 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update_announcement'])
                     <li class="nav-item"><a class="nav-link" href="labresources.php">Lab Resources</a></li>
                     <li class="nav-item"><a class="nav-link" href="reports.php">Reports</a></li>
                     <li class="nav-item"><a class="nav-link" href="reward.php">Leaderboard</a></li>
+                    <li class="nav-item dropdown ms-auto">
+                        <a class="nav-link" href="#" id="searchDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-search"></i>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-end p-2" aria-labelledby="searchDropdown" style="min-width: 200px;">
+                            <form class="d-flex" method="get" action="admin.php">
+                                <input class="form-control me-2" type="search" name="search" placeholder="Search students..." aria-label="Search" autofocus>
+                            </form>
+                        </div>
+                    </li>
                 </ul>
+                <!-- Search Icon Dropdown -->
+                <div class="nav-item dropdown ms-auto">
+                    <a class="nav-link" href="#" id="searchDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fas fa-search"></i>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-end p-2" aria-labelledby="searchDropdown" style="min-width: 200px;">
+                        <form class="d-flex" method="get" action="admin.php">
+                            <input class="form-control me-2" type="search" name="search" placeholder="Search students..." aria-label="Search" autofocus>
+                        </form>
+                    </div>
+                </div>
                 <?php
                 require_once 'includes/notifications.php';
                 $notification_count = getNotificationCount($conn, 'admin', 'admin');

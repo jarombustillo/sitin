@@ -61,11 +61,42 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 }
 
 // Fetch all reservations with user details
+// Build filter conditions
+$conditions = [];
+$params = [];
+$types = '';
+if (isset($_GET['status']) && $_GET['status'] !== '') {
+    $conditions[] = 'r.STATUS = ?';
+    $params[] = $_GET['status'];
+    $types .= 's';
+}
+if (isset($_GET['date']) && $_GET['date'] !== '') {
+    $conditions[] = 'r.DATE = ?';
+    $params[] = $_GET['date'];
+    $types .= 's';
+}
+if (isset($_GET['laboratory']) && $_GET['laboratory'] !== '') {
+    $conditions[] = 'r.LABORATORY = ?';
+    $params[] = $_GET['laboratory'];
+    $types .= 's';
+}
+
 $sql = "SELECT r.*, u.Firstname, u.Lastname, u.Midname, u.course, u.year_level 
         FROM reservations r 
-        JOIN user u ON r.IDNO = u.IDNO 
-        ORDER BY r.DATE, r.TIME_SLOT";
-$result = $conn->query($sql);
+        JOIN user u ON r.IDNO = u.IDNO";
+if (!empty($conditions)) {
+    $sql .= ' WHERE ' . implode(' AND ', $conditions);
+}
+$sql .= ' ORDER BY r.DATE, r.TIME_SLOT';
+
+if (!empty($params)) {
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param($types, ...$params);
+    $stmt->execute();
+    $result = $stmt->get_result();
+} else {
+    $result = $conn->query($sql);
+}
 ?>
 
 <!DOCTYPE html>

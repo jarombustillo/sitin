@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 14, 2025 at 05:13 PM
+-- Generation Time: May 15, 2025 at 09:35 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -59,7 +59,9 @@ CREATE TABLE `announcement` (
 
 INSERT INTO `announcement` (`ID`, `TITLE`, `CONTENT`, `CREATED_AT`) VALUES
 (1, 'HW', 'Hello World', '2025-03-24 10:11:02'),
-(2, 'Hi', 'Hi Kalibutan', '2025-03-24 10:11:12');
+(2, 'Hi', 'Hi Kalibutan', '2025-03-24 10:11:12'),
+(3, 'Assignment', 'Assignment', '2025-05-14 21:19:09'),
+(4, 'ddd', 'sss', '2025-05-14 21:41:03');
 
 -- --------------------------------------------------------
 
@@ -223,7 +225,38 @@ INSERT INTO `notifications` (`ID`, `USER_ID`, `MESSAGE`, `TYPE`, `DETAILS`, `IS_
 (15, 0, 'Reservation for John Doe (Lab 526, PC 4) has been cancelled', 'admin', '', 1, '2025-05-12 10:32:52'),
 (16, 0, 'New reservation submitted by student ID 1000 for Lab 524, PC 2, 2025-05-19 (8:00AM-9:00AM).', 'admin', '', 1, '2025-05-14 13:54:58'),
 (17, 1000, 'Your reservation for Lab 524, PC 2 on May 19, 2025 (8:00AM-9:00AM) has been confirmed', 'user', '', 1, '2025-05-14 14:00:33'),
-(18, 0, 'Reservation for Jarom Bustillo (Lab 524, PC 2) has been confirmed', 'admin', '', 1, '2025-05-14 14:00:33');
+(18, 0, 'Reservation for Jarom Bustillo (Lab 524, PC 2) has been confirmed', 'admin', '', 1, '2025-05-14 14:00:33'),
+(19, 0, 'New reservation submitted by student ID 1000 for Lab 524, PC 1, 2025-05-19 (8:00AM-9:00AM).', 'admin', '', 1, '2025-05-14 15:19:41'),
+(20, 1000, 'Your reservation for Lab 524, PC 1 on May 19, 2025 (8:00AM-9:00AM) has been confirmed', 'user', '', 1, '2025-05-14 15:28:56'),
+(21, 0, 'Reservation for Jarom Bustillo (Lab 524, PC 1) has been confirmed', 'admin', '', 1, '2025-05-14 15:28:56'),
+(22, 0, 'New reservation submitted by student ID  for Lab , PC ,  ().', 'admin', '', 1, '2025-05-15 03:15:06'),
+(23, 0, 'New reservation submitted by student ID 2000 for Lab 524, PC 2, 2025-05-19 (8:00AM-9:00AM).', 'admin', '', 1, '2025-05-15 03:16:20'),
+(24, 2000, 'Your reservation for Lab 524, PC 2 on May 19, 2025 (8:00AM-9:00AM) has been cancelled', 'user', '', 0, '2025-05-15 03:16:35'),
+(25, 0, 'Reservation for John Doe (Lab 524, PC 2) has been cancelled', 'admin', '', 1, '2025-05-15 03:16:35'),
+(26, 0, 'New reservation submitted by student ID 2000 for Lab 524, PC 2, 2025-05-19 (8:00AM-9:00AM).', 'admin', '', 1, '2025-05-15 03:17:24'),
+(27, 2000, 'Your reservation for Lab 524, PC 2 on May 19, 2025 (8:00AM-9:00AM) has been confirmed', 'user', '', 0, '2025-05-15 03:17:37'),
+(28, 0, 'Reservation for John Doe (Lab 524, PC 2) has been confirmed', 'admin', '', 1, '2025-05-15 03:17:37'),
+(29, 0, 'New reservation submitted by student ID 1000 for Lab , PC ,  ().', 'admin', '', 1, '2025-05-15 03:38:25'),
+(30, 1000, 'A new announcement has been posted: \\\'ddd\\\'', 'user', '', 1, '2025-05-15 03:41:03'),
+(31, 2000, 'A new announcement has been posted: \\\'ddd\\\'', 'user', '', 0, '2025-05-15 03:41:03'),
+(32, 3000, 'A new announcement has been posted: \\\'ddd\\\'', 'user', '', 0, '2025-05-15 03:41:03'),
+(33, 4000, 'A new announcement has been posted: \\\'ddd\\\'', 'user', '', 0, '2025-05-15 03:41:03'),
+(34, 5000, 'A new announcement has been posted: \\\'ddd\\\'', 'user', '', 0, '2025-05-15 03:41:03'),
+(35, 6000, 'A new announcement has been posted: \\\'ddd\\\'', 'user', '', 0, '2025-05-15 03:41:03'),
+(36, 0, 'New sit-in recorded for Jarom Bustillo in 524', 'admin', '', 1, '2025-05-15 03:57:30'),
+(37, 1000, 'You earned 10 points for your sit-in in 524', 'user', '', 0, '2025-05-15 03:57:30'),
+(38, 0, 'New sit-in recorded for John Doe in 524', 'admin', '', 1, '2025-05-15 03:58:11'),
+(39, 2000, 'You earned 10 points for your sit-in in 524', 'user', '', 0, '2025-05-15 03:58:11'),
+(40, 0, 'New sit-in recorded for John Doe in 526', 'admin', '', 1, '2025-05-15 03:58:25'),
+(41, 2000, 'You earned 10 points for your sit-in in 526', 'user', '', 0, '2025-05-15 03:58:25'),
+(42, 0, 'New sit-in recorded for John Doe in 526', 'admin', '', 1, '2025-05-15 04:01:00'),
+(43, 2000, 'You earned 10 points for your sit-in in 526', 'user', '', 0, '2025-05-15 04:01:00'),
+(44, 0, 'New sit-in recorded for Jarom Bustillo in 526', 'admin', '', 1, '2025-05-15 04:04:12'),
+(45, 1000, 'You earned 10 points for your sit-in in 526', 'user', '', 0, '2025-05-15 04:04:12'),
+(46, 0, 'New sit-in recorded for John Doe in 524', 'admin', '', 1, '2025-05-15 04:20:33'),
+(47, 2000, 'You earned 10 points for your sit-in in 524', 'user', '', 0, '2025-05-15 04:20:33'),
+(48, 0, 'New sit-in recorded for Jarom Bustillo in 530', 'admin', '', 0, '2025-05-15 04:26:32'),
+(49, 1000, 'You earned 10 points for your sit-in in 530', 'user', '', 0, '2025-05-15 04:26:32');
 
 -- --------------------------------------------------------
 
@@ -265,7 +298,20 @@ INSERT INTO `points_history` (`ID`, `IDNO`, `FULLNAME`, `POINTS_EARNED`, `CONVER
 (4, '1000', 'Jarom Bustillo', 10, 0, '2025-05-08 09:22:56'),
 (5, '2000', 'John Doe', -2, 1, '2025-05-14 22:37:13'),
 (6, '3000', 'Marphine Faith Mangubat', -2, 1, '2025-05-14 22:37:16'),
-(7, '3000', 'Marphine Faith Mangubat', -2, 1, '2025-05-14 22:41:46');
+(7, '3000', 'Marphine Faith Mangubat', -2, 1, '2025-05-14 22:41:46'),
+(8, '1000', 'Jarom Bustillo', 10, 0, '2025-05-15 11:57:30'),
+(9, '1000', 'Jarom Bustillo', -2, 1, '2025-05-15 11:57:55'),
+(10, '2000', 'John Doe', 10, 0, '2025-05-15 11:58:11'),
+(11, '2000', 'John Doe', 10, 0, '2025-05-15 11:58:25'),
+(12, '2000', 'John Doe', -2, 1, '2025-05-15 11:58:53'),
+(13, '2000', 'John Doe', 10, 0, '2025-05-15 12:01:00'),
+(14, '1000', 'Jarom Bustillo', 10, 0, '2025-05-15 12:04:12'),
+(15, '1000', 'Jarom Bustillo', -2, 1, '2025-05-15 12:04:25'),
+(16, '2000', 'John Doe', 10, 0, '2025-05-15 12:20:33'),
+(17, '1000', 'Jarom Bustillo', 10, 0, '2025-05-15 12:26:32'),
+(18, '1000', 'Jarom Bustillo', -2, 1, '2025-05-15 12:52:32'),
+(19, '2000', 'John Doe', -2, 1, '2025-05-15 12:52:38'),
+(20, '2000', 'John Doe', -2, 1, '2025-05-15 12:52:44');
 
 -- --------------------------------------------------------
 
@@ -296,7 +342,10 @@ INSERT INTO `reservations` (`ID`, `IDNO`, `LABORATORY`, `PC_NUMBER`, `DATE`, `TI
 (6, 2000, 'Lab 526', 42, '2025-05-08', '16:00-17:00', 'huhu', 'cancelled', '2025-05-08 13:17:10', '2025-05-08 13:21:15'),
 (7, 2000, 'Lab 524', 47, '2025-05-08', '16:00-17:00', 'wewe', 'cancelled', '2025-05-08 13:24:39', '2025-05-08 13:45:54'),
 (12, 2000, '524', 4, '2025-05-12', '8:00AM-9:00AM', 'hehe', 'confirmed', '2025-05-12 18:31:06', '2025-05-12 18:31:27'),
-(13, 2000, '526', 4, '2025-05-12', '8:00AM-9:00AM', 'wewe', 'cancelled', '2025-05-12 18:32:23', '2025-05-12 18:32:52');
+(13, 2000, '526', 4, '2025-05-12', '8:00AM-9:00AM', 'wewe', 'cancelled', '2025-05-12 18:32:23', '2025-05-12 18:32:52'),
+(15, 1000, '524', 1, '2025-05-19', '8:00AM-9:00AM', 'ddd', 'confirmed', '2025-05-14 23:19:41', '2025-05-14 23:28:56'),
+(16, 2000, '524', 2, '2025-05-19', '8:00AM-9:00AM', 'ddd', 'cancelled', '2025-05-15 11:16:20', '2025-05-15 11:16:35'),
+(17, 2000, '524', 2, '2025-05-19', '8:00AM-9:00AM', 'ggg', 'confirmed', '2025-05-15 11:17:24', '2025-05-15 11:17:37');
 
 -- --------------------------------------------------------
 
@@ -306,9 +355,9 @@ INSERT INTO `reservations` (`ID`, `IDNO`, `LABORATORY`, `PC_NUMBER`, `DATE`, `TI
 
 CREATE TABLE `reward_points` (
   `ID` int(11) NOT NULL,
-  `STUDENT_ID` varchar(50) DEFAULT NULL,
-  `POINTS` int(11) DEFAULT 0,
-  `LAST_REWARD_DATE` date DEFAULT NULL
+  `STUDENT_ID` int(11) NOT NULL,
+  `POINTS` int(11) NOT NULL,
+  `LAST_REWARD_DATE` date NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -316,8 +365,8 @@ CREATE TABLE `reward_points` (
 --
 
 INSERT INTO `reward_points` (`ID`, `STUDENT_ID`, `POINTS`, `LAST_REWARD_DATE`) VALUES
-(14, '2000', 2, '2025-05-08'),
-(15, '3000', 0, '2025-05-08');
+(22, 2000, 6, '2025-05-15'),
+(23, 1000, 8, '2025-05-15');
 
 -- --------------------------------------------------------
 
@@ -359,7 +408,14 @@ INSERT INTO `sitin_records` (`ID`, `IDNO`, `PURPOSE`, `LABORATORY`, `TIME_IN`, `
 (1016, 1000, 'PHP', '524', '2025-05-08 03:21:10', '2025-05-08 03:22:28'),
 (1017, 2000, 'Java', '544', '2025-05-08 03:21:21', '2025-05-08 03:22:28'),
 (1018, 3000, 'Python', '526', '2025-05-08 03:21:32', '2025-05-08 03:22:27'),
-(1019, 1000, 'C#', '530', '2025-05-08 03:22:56', '2025-05-08 03:23:47');
+(1019, 1000, 'C#', '530', '2025-05-08 03:22:56', '2025-05-08 03:23:47'),
+(1020, 1000, 'Python', '524', '2025-05-15 05:57:30', '2025-05-15 05:57:48'),
+(1021, 2000, 'Java', '524', '2025-05-15 05:58:11', '2025-05-15 05:58:15'),
+(1022, 2000, 'C', '526', '2025-05-15 05:58:25', '2025-05-15 05:58:45'),
+(1023, 2000, 'Java', '526', '2025-05-15 06:01:00', '2025-05-15 06:01:03'),
+(1024, 1000, 'C', '526', '2025-05-15 06:04:12', '2025-05-15 06:04:20'),
+(1025, 2000, 'Java', '524', '2025-05-15 06:20:33', '2025-05-15 06:20:36'),
+(1026, 1000, 'C#', '530', '2025-05-15 06:26:32', '2025-05-15 06:26:35');
 
 -- --------------------------------------------------------
 
@@ -455,7 +511,8 @@ ALTER TABLE `reservations`
 -- Indexes for table `reward_points`
 --
 ALTER TABLE `reward_points`
-  ADD PRIMARY KEY (`ID`);
+  ADD PRIMARY KEY (`ID`),
+  ADD UNIQUE KEY `STUDENT_ID` (`STUDENT_ID`);
 
 --
 -- Indexes for table `sitin_records`
@@ -483,7 +540,7 @@ ALTER TABLE `admin`
 -- AUTO_INCREMENT for table `announcement`
 --
 ALTER TABLE `announcement`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `feedback`
@@ -507,7 +564,7 @@ ALTER TABLE `lab_resources`
 -- AUTO_INCREMENT for table `notifications`
 --
 ALTER TABLE `notifications`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=50;
 
 --
 -- AUTO_INCREMENT for table `pc_status`
@@ -519,19 +576,19 @@ ALTER TABLE `pc_status`
 -- AUTO_INCREMENT for table `points_history`
 --
 ALTER TABLE `points_history`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- AUTO_INCREMENT for table `reservations`
 --
 ALTER TABLE `reservations`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
 -- AUTO_INCREMENT for table `reward_points`
 --
 ALTER TABLE `reward_points`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
 
 --
 -- Constraints for dumped tables

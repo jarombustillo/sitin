@@ -41,6 +41,26 @@ if (isset($_POST['laboratory'])) {
 
 // Handle form submission
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    // Check if this is a cancellation request
+    if (isset($_POST['cancel_reservation'])) {
+        $reservation_id = $_POST['reservation_id'];
+        $lab = $_POST['lab'];
+        $pc_number = $_POST['pc_number'];
+        // Update reservation status to cancelled
+        $update_sql = "UPDATE reservations SET STATUS = 'cancelled' WHERE ID = ?";
+        $update_stmt = $conn->prepare($update_sql);
+        $update_stmt->bind_param("i", $reservation_id);
+        if ($update_stmt->execute()) {
+            // Directly set PC status to available
+            $update_pc_sql = "UPDATE pc_status SET STATUS = 'available' WHERE ROOM_NUMBER = ? AND PC_NUMBER = ?";
+            $update_pc_stmt = $conn->prepare($update_pc_sql);
+            $update_pc_stmt->bind_param("ss", $lab, $pc_number);
+            $update_pc_stmt->execute();
+            $message = "Reservation cancelled successfully!";
+        } else {
+            $error = "Error cancelling reservation. Please try again.";
+        }
+    }
     // Validate required fields
     if (!isset($_POST['laboratory']) || empty($_POST['laboratory'])) {
         $error = "Please select a laboratory.";
@@ -77,13 +97,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $error = "This PC is already reserved for the selected time slot.";
             } else {
                 // Insert the reservation
+                $today = date('Y-m-d');
+                $reservation_status = ($date === $today) ? 'confirmed' : 'pending';
                 $insert_sql = "INSERT INTO reservations (IDNO, LABORATORY, PC_NUMBER, DATE, TIME_SLOT, PURPOSE, STATUS, CREATED_AT) 
-                              VALUES (?, ?, ?, ?, ?, ?, 'pending', NOW())";
+                              VALUES (?, ?, ?, ?, ?, ?, ?, NOW())";
                 $insert_stmt = $conn->prepare($insert_sql);
-                if ($insert_stmt->bind_param("ssssss", $_SESSION['IDNO'], $laboratory, $pc_number, $date, $time_slot, $purpose)) {
+                if ($insert_stmt->bind_param("sssssss", $_SESSION['IDNO'], $laboratory, $pc_number, $date, $time_slot, $purpose, $reservation_status)) {
                     if ($insert_stmt->execute()) {
-                        // Update PC status to unavailable
-                        $update_pc_sql = "UPDATE pc_status SET STATUS = 'unavailable' WHERE ROOM_NUMBER = ? AND PC_NUMBER = ?";
+                        // Update PC status to in-use
+                        $update_pc_sql = "UPDATE pc_status SET STATUS = 'in-use' WHERE ROOM_NUMBER = ? AND PC_NUMBER = ?";
                         $update_pc_stmt = $conn->prepare($update_pc_sql);
                         $update_pc_stmt->bind_param("ss", $laboratory, $pc_number);
                         $update_pc_stmt->execute();
@@ -160,27 +182,53 @@ $reservations = $reservations_stmt->get_result();
         }
 
         .pc-item {
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
             text-align: center;
             cursor: pointer;
             transition: all 0.3s ease;
+            background: white;
+            position: relative;
         }
 
         .pc-item:hover {
-            background-color: #f8f9fa;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
         }
 
         .pc-item.selected {
-            background-color: #007bff;
-            color: white;
+            border-color: #007bff;
+            background-color: #e3f2fd;
+            box-shadow: 0 4px 12px rgba(0,123,255,0.2);
         }
 
-        .pc-item.reserved {
-            background-color: #dc3545;
-            color: white;
+        .pc-item.available {
+            border-color: #28a745;
+        }
+
+        .pc-item.in-use {
+            border-color: #dc3545;
             cursor: not-allowed;
+            opacity: 0.8;
+        }
+
+        .pc-item.maintenance {
+            border-color: #fd7e14;
+            cursor: not-allowed;
+            opacity: 0.8;
+        }
+
+        .pc-item.unavailable {
+            border-color: #6c757d;
+            cursor: not-allowed;
+            opacity: 0.8;
+        }
+
+        .status-text {
+            font-size: 0.9em;
+            margin-top: 5px;
+            font-weight: 500;
         }
 
         .time-slots {
@@ -302,55 +350,27 @@ $reservations = $reservations_stmt->get_result();
                             </div>
 
                             <div class="mb-3">
-                                <label for="pc_number" class="form-label">PC Number</label>
+                                <label class="form-label">Select PC:</label>
                                 <div class="pc-grid">
                                     <?php
-                                    $dateSelected = isset($_POST['date']) && !empty($_POST['date']);
-                                    $timeSlotSelected = isset($_POST['time_slot']) && !empty($_POST['time_slot']);
-                                    for ($i = 1; $i <= 50; $i++) {
-                                        $status = 'available'; // Default status
-                                        $disabled = '';
-                                        $statusClass = 'btn-outline-primary';
-                                        // Check if PC exists in pc_status table
-                                        if (isset($pcStatus)) {
-                                            foreach ($pcStatus as $pc) {
-                                                if ($pc['PC_NUMBER'] == $i) {
-                                                    $status = $pc['STATUS'];
-                                                    if ($status == 'maintenance') {
-                                                        $disabled = 'disabled';
-                                                        $statusClass = 'btn-danger';
-                                                    } elseif ($status == 'in-use') {
-                                                        $disabled = 'disabled';
-                                                        $statusClass = 'btn-warning';
-                                                    }
-                                                    break;
-                                                }
-                                            }
+                                    if (isset($pcStatus) && !empty($pcStatus)) {
+                                        foreach ($pcStatus as $pc) {
+                                            $status = strtolower($pc['STATUS']);
+                                            $isAvailable = $status === 'available';
+                                            $statusClass = $status;
+                                            ?>
+                                            <div class="pc-item <?php echo $statusClass; ?>" 
+                                                 data-pc="<?php echo $pc['PC_NUMBER']; ?>"
+                                                 onclick="<?php echo $isAvailable ? 'selectPC(this)' : 'alert(\'This PC is not available for reservation.\')'; ?>">
+                                                PC <?php echo $pc['PC_NUMBER']; ?>
+                                                <div class="status-text"><?php echo ucfirst($status); ?></div>
+                                            </div>
+                                            <?php
                                         }
-                                        // Only check reservations if both date and time slot are selected
-                                        if ($dateSelected && $timeSlotSelected) {
-                                            $check_sql = "SELECT * FROM reservations 
-                                                        WHERE LABORATORY = ? AND PC_NUMBER = ? 
-                                                        AND DATE = ? AND TIME_SLOT = ? 
-                                                        AND STATUS IN ('pending', 'confirmed', 'approved')";
-                                            $check_stmt = $conn->prepare($check_sql);
-                                            $check_stmt->bind_param("ssss", $_POST['laboratory'], $i, $_POST['date'], $_POST['time_slot']);
-                                            $check_stmt->execute();
-                                            if ($check_stmt->get_result()->num_rows > 0) {
-                                                $disabled = 'disabled';
-                                                $statusClass = 'btn-secondary';
-                                                $status = 'reserved';
-                                            }
-                                        }
+                                    } else {
+                                        echo '<p>Please select a laboratory first.</p>';
+                                    }
                                     ?>
-                                        <button type="button" 
-                                                class="btn <?php echo $statusClass; ?> pc-item" 
-                                                data-pc="<?php echo $i; ?>"
-                                                <?php echo $disabled; ?>>
-                                            PC <?php echo $i; ?>
-                                            <small class="d-block"><?php echo ucfirst($status); ?></small>
-                                        </button>
-                                    <?php } ?>
                                 </div>
                                 <input type="hidden" name="pc_number" id="selected_pc" required>
                             </div>
@@ -413,6 +433,19 @@ $reservations = $reservations_stmt->get_result();
                                         <div><strong>Date:</strong> <?php echo htmlspecialchars($row['DATE']); ?></div>
                                         <div><strong>Time Slot:</strong> <?php echo htmlspecialchars($row['TIME_SLOT']); ?></div>
                                         <div><strong>Purpose:</strong> <?php echo htmlspecialchars($row['PURPOSE']); ?></div>
+                                        <?php if ($row['STATUS'] === 'pending' || $row['STATUS'] === 'confirmed'): ?>
+                                            <form method="POST" class="mt-2">
+                                                <input type="hidden" name="reservation_id" value="<?php echo $row['ID']; ?>">
+                                                <input type="hidden" name="lab" value="<?php echo $row['LABORATORY']; ?>">
+                                                <input type="hidden" name="pc_number" value="<?php echo $row['PC_NUMBER']; ?>">
+                                                <input type="hidden" name="date" value="<?php echo $row['DATE']; ?>">
+                                                <input type="hidden" name="time_slot" value="<?php echo $row['TIME_SLOT']; ?>">
+                                                <input type="hidden" name="cancel_reservation" value="1">
+                                                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to cancel this reservation?')">
+                                                    Cancel Reservation
+                                                </button>
+                                            </form>
+                                        <?php endif; ?>
                                     </div>
                                 <?php endwhile; ?>
                             </div>
@@ -467,9 +500,12 @@ $reservations = $reservations_stmt->get_result();
         }
         document.getElementById('laboratory').addEventListener('change', function() {
             const lab = this.value;
-            const date = document.getElementById('date').value;
-            if (lab && date) {
-                fetchSchedules(lab, date);
+            if (lab) {
+                fetchPCStatus(lab);
+                const date = document.getElementById('date').value;
+                if (date) {
+                    fetchSchedules(lab, date);
+                }
             }
         });
         document.getElementById('date').addEventListener('change', function() {
@@ -550,6 +586,60 @@ $reservations = $reservations_stmt->get_result();
         window.addEventListener('DOMContentLoaded', function() {
             attachPCClickHandlers();
         });
+        function selectPC(element) {
+            // Remove selected class from all PCs
+            document.querySelectorAll('.pc-item').forEach(pc => {
+                pc.classList.remove('selected');
+            });
+            
+            // Add selected class to clicked PC
+            element.classList.add('selected');
+            
+            // Update hidden input with selected PC number
+            document.getElementById('selected_pc').value = element.getAttribute('data-pc');
+        }
+        function fetchPCStatus(lab) {
+            fetch('get_pc_status.php?lab=' + lab)
+                .then(response => response.json())
+                .then(data => {
+                    const pcGrid = document.querySelector('.pc-grid');
+                    pcGrid.innerHTML = '';
+                    
+                    if (data.length > 0) {
+                        data.forEach(pc => {
+                            const status = pc.STATUS.toLowerCase();
+                            const isAvailable = status === 'available';
+                            
+                            const pcDiv = document.createElement('div');
+                            pcDiv.className = `pc-item ${status}`;
+                            pcDiv.setAttribute('data-pc', pc.PC_NUMBER);
+                            
+                            if (isAvailable) {
+                                pcDiv.addEventListener('click', function() {
+                                    selectPC(this);
+                                });
+                            } else {
+                                pcDiv.addEventListener('click', function() {
+                                    alert('This PC is not available for reservation.');
+                                });
+                            }
+                            
+                            pcDiv.innerHTML = `
+                                <div class="pc-number">PC ${pc.PC_NUMBER}</div>
+                                <div class="status-text">${status.charAt(0).toUpperCase() + status.slice(1)}</div>
+                            `;
+                            
+                            pcGrid.appendChild(pcDiv);
+                        });
+                    } else {
+                        pcGrid.innerHTML = '<p>No PCs found for this laboratory.</p>';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    document.querySelector('.pc-grid').innerHTML = '<p class="text-danger">Error loading PC status.</p>';
+                });
+        }
     </script>
 </body>
 </html> 

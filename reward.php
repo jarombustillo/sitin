@@ -287,6 +287,7 @@ $history_result = $conn->query($history_sql);
                 <li class="nav-item"><a class="nav-link" href="current_sitin.php">Sit-In</a></li>
                 <li class="nav-item"><a class="nav-link" href="sitinrecords.php">Sit-in Records</a></li>
                 <li class="nav-item"><a class="nav-link" href="manage_reservations.php">Reservations</a></li>
+                <li class="nav-item"><a class="nav-link" href="pc_status.php">PC</a></li>
                 <li class="nav-item"><a class="nav-link " href="admin/lab_schedules.php">Lab Schedules</a></li>
                 <li class="nav-item"><a class="nav-link" href="admin/feedback.php">Feedback</a></li>
                 <li class="nav-item"><a class="nav-link" href="labresources.php">Lab Resources</a></li>
@@ -389,7 +390,7 @@ $history_result = $conn->query($history_sql);
                                             <input type="hidden" name="student_id" value="<?php echo htmlspecialchars($row['IDNO']); ?>">
                                             <input type="hidden" name="fullname" value="<?php echo $fullname; ?>">
                                             <button type="submit" name="reward_action" class="btn btn-sm btn-success"
-                                                <?php if ($row['points'] < 2 || $row['session_count'] >= 30) echo 'disabled'; ?>>
+                                                <?php if ($row['points'] < 3 || $row['session_count'] >= 30) echo 'disabled'; ?>>
                                                 Reward
                                             </button>
                                         </form>
@@ -520,7 +521,7 @@ $history_result = $conn->query($history_sql);
     </div>
 
     <?php if (isset($_GET['rewarded'])): ?>
-        <div class="alert alert-success text-center">Reward applied: 2 points converted to 1 session!</div>
+        <div class="alert alert-success text-center">Reward applied: 3 points converted to 1 session!</div>
     <?php elseif (isset($_GET['reward_error'])): ?>
         <div class="alert alert-danger text-center">Cannot reward: Not enough points or session limit reached.</div>
     <?php endif; ?>

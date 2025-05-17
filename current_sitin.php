@@ -25,7 +25,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['time_out_submit'])) {
     $timeout_time = date("Y-m-d H:i:s");
     
     // First get the current session count and IDNO
-    $get_session_sql = "SELECT u.session_count, u.IDNO 
+    $get_session_sql = "SELECT u.session_count, u.IDNO, sr.LABORATORY, sr.PURPOSE, sr.TIME_IN 
                        FROM sitin_records sr 
                        JOIN user u ON sr.IDNO = u.IDNO 
                        WHERE sr.ID = '$sit_id'";
@@ -33,6 +33,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['time_out_submit'])) {
     $session_row = $session_result->fetch_assoc();
     $current_session = $session_row['session_count'];
     $idno = $session_row['IDNO'];
+    $laboratory = $session_row['LABORATORY'];
+    $purpose = $session_row['PURPOSE'];
+    $time_in = $session_row['TIME_IN'];
     
     // Decrease session count by 1
     $new_session_count = $current_session - 1;
@@ -43,7 +46,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['time_out_submit'])) {
     // Update the user's session count
     $update_session_sql = "UPDATE user SET session_count = '$new_session_count' WHERE IDNO = '$idno'";
 
+    // Mark the reservation as USED if it matches this session
+    $update_reservation_sql = "UPDATE reservations SET USED = 1 WHERE IDNO = '$idno' AND LABORATORY = '$laboratory' AND PURPOSE = '$purpose' AND STATUS = 'confirmed' AND USED = 0 LIMIT 1";
+
     if ($conn->query($sql_timeout) === TRUE && $conn->query($update_session_sql) === TRUE) {
+        $conn->query($update_reservation_sql);
         // Success
         header("Location: current_sitin.php?timeout_success=true");
         exit();
@@ -53,18 +60,55 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['time_out_submit'])) {
     }
 }
 
-// Fetch current sit-in records with user details
-$sql = "SELECT sr.ID, sr.IDNO, sr.PURPOSE, sr.LABORATORY, sr.TIME_IN,
-        u.Lastname, u.Firstname, u.Midname, u.course, u.year_level, u.session_count
+// Handle start session for reserved users
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['start_session'])) {
+    $idno = $conn->real_escape_string($_POST['idno']);
+    $laboratory = $conn->real_escape_string($_POST['laboratory']);
+    $purpose = $conn->real_escape_string($_POST['purpose']);
+    $time_in = date("Y-m-d H:i:s");
+    // Insert into sitin_records with TIME_OUT as NULL
+    $sql_insert = "INSERT INTO sitin_records (IDNO, PURPOSE, LABORATORY, TIME_IN, TIME_OUT) VALUES ('$idno', '$purpose', '$laboratory', '$time_in', NULL)";
+    if ($conn->query($sql_insert) === TRUE) {
+        header("Location: current_sitin.php?session_started=true");
+        exit();
+    } else {
+        $error_message = "Error starting session: " . $conn->error;
+    }
+}
+
+// Fetch current sit-in users
+$sql_sitin = "SELECT sr.ID, sr.IDNO, sr.PURPOSE, sr.LABORATORY, sr.TIME_IN,
+        u.Lastname, u.Firstname, u.Midname, u.course, u.year_level, u.session_count,
+        NULL as reservation_status, NULL as PC_NUMBER, NULL as TIME_SLOT, 'Sit-In' as user_status
         FROM sitin_records sr
         JOIN user u ON sr.IDNO = u.IDNO
-        WHERE sr.TIME_OUT IS NULL
-        ORDER BY sr.TIME_IN DESC";
+        WHERE sr.TIME_OUT IS NULL";
 
-$result = $conn->query($sql);
+// Fetch users with approved reservations who are not currently sitting in
+$sql_reservation = "SELECT NULL as ID, r.IDNO, r.PURPOSE, r.LABORATORY, NULL as TIME_IN,
+        u.Lastname, u.Firstname, u.Midname, u.course, u.year_level, u.session_count,
+        r.STATUS as reservation_status, r.PC_NUMBER, r.TIME_SLOT, 'Reserved' as user_status
+        FROM reservations r
+        JOIN user u ON r.IDNO = u.IDNO
+        WHERE r.STATUS = 'confirmed' AND r.USED = 0
+        AND r.IDNO NOT IN (
+            SELECT IDNO FROM sitin_records WHERE TIME_OUT IS NULL
+        )";
 
-if (!$result) {
-    die("Error fetching data: " . $conn->error);
+$reservation_result = $conn->query($sql_reservation);
+
+// Combine both results
+$result = $conn->query($sql_sitin);
+$users = [];
+if ($result && $result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+        $users[] = $row;
+    }
+}
+if ($reservation_result && $reservation_result->num_rows > 0) {
+    while ($row = $reservation_result->fetch_assoc()) {
+        $users[] = $row;
+    }
 }
 ?>
 
@@ -179,13 +223,14 @@ if (!$result) {
                     <th>Purpose</th>
                     <th>Laboratory</th>
                     <th>Time In</th>
+                    <th>Status</th>
                     <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
                 <?php
-                if ($result->num_rows > 0) {
-                    while ($row = $result->fetch_assoc()) {
+                if (count($users) > 0) {
+                    foreach ($users as $row) {
                         $fullname = htmlspecialchars($row['Lastname'] . ', ' . $row['Firstname'] . ' ' . $row['Midname']);
                         $course_year = htmlspecialchars($row['course'] . ' - Year ' . $row['year_level']);
                         echo "<tr>";
@@ -194,18 +239,30 @@ if (!$result) {
                         echo "<td>" . $course_year . "</td>";
                         echo "<td>" . htmlspecialchars($row['PURPOSE']) . "</td>";
                         echo "<td>" . htmlspecialchars($row['LABORATORY']) . "</td>";
-                        echo "<td>" . date('h:i A', strtotime($row['TIME_IN'])) . "</td>";
+                        echo "<td>" . ($row['TIME_IN'] ? date('h:i A', strtotime($row['TIME_IN'])) : '-') . "</td>";
+                        echo "<td>" . $row['user_status'] . "</td>";
                         echo "<td class='action-buttons'>";
-                        echo "<span class='me-2'>Sessions: " . htmlspecialchars($row['session_count']) . "</span>";
-                        echo "<form method='POST' style='display: inline;'>";
-                        echo "<input type='hidden' name='sit_id' value='" . $row['ID'] . "'>";
-                        echo "<button type='submit' name='time_out_submit' class='btn-sitout'>Time Out</button>";
-                        echo "</form>";
+                        if ($row['user_status'] === 'Sit-In') {
+                            echo "<span class='me-2'>Sessions: " . htmlspecialchars($row['session_count']) . "</span>";
+                            echo "<form method='POST' style='display: inline;'>";
+                            echo "<input type='hidden' name='sit_id' value='" . $row['ID'] . "'>";
+                            echo "<button type='submit' name='time_out_submit' class='btn-sitout'>Time Out</button>";
+                            echo "</form>";
+                        } else if ($row['user_status'] === 'Reserved') {
+                            echo "<form method='POST' style='display: inline;'>";
+                            echo "<input type='hidden' name='idno' value='" . htmlspecialchars($row['IDNO']) . "'>";
+                            echo "<input type='hidden' name='laboratory' value='" . htmlspecialchars($row['LABORATORY']) . "'>";
+                            echo "<input type='hidden' name='purpose' value='" . htmlspecialchars($row['PURPOSE']) . "'>";
+                            echo "<button type='submit' name='start_session' class='btn btn-primary btn-sm'>Start Session</button>";
+                            echo "</form>";
+                        } else {
+                            echo "-";
+                        }
                         echo "</td>";
                         echo "</tr>";
                     }
                 } else {
-                    echo "<tr><td colspan='7' class='text-center'>No users currently sitting in</td></tr>";
+                    echo "<tr><td colspan='9' class='text-center'>No users currently sitting in or reserved</td></tr>";
                 }
                 ?>
             </tbody>

@@ -87,9 +87,9 @@ if (isset($_POST['reward_action'])) {
     $points = (int)$row['points'];
     $sessions = (int)$row['session_count'];
     if ((int)$points >= 2 && (int)$sessions < 30) {
-        // Subtract 2 points, add 1 session (max 30)
+        // Subtract 3 points, add 1 session (max 30)
         $new_sessions = min($sessions + 1, 30);
-        $update_points_sql = "UPDATE reward_points SET POINTS = POINTS - 2 WHERE STUDENT_ID = ?";
+        $update_points_sql = "UPDATE reward_points SET POINTS = POINTS - 3 WHERE STUDENT_ID = ?";
         $update_points_stmt = $conn->prepare($update_points_sql);
         $update_points_stmt->bind_param("s", $student_id);
         $update_points_stmt->execute();
